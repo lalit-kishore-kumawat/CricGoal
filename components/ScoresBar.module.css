@@ -1,0 +1,45 @@
+.bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--espn-border);
+  display: flex;
+  overflow-x: auto;
+  height: 60px;
+  align-items: stretch;
+  scrollbar-width: none;
+}
+.bar::-webkit-scrollbar { display: none; }
+
+.empty {
+  padding: 0 20px; color: var(--text-muted);
+  font-size: 13px; display: flex; align-items: center;
+}
+
+.card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 16px; border-right: 1px solid var(--espn-border);
+  flex-shrink: 0; cursor: pointer; transition: background 0.15s;
+}
+.card:hover { background: var(--bg); }
+
+.teams { display: flex; flex-direction: column; gap: 3px; }
+.teamRow { display: flex; align-items: center; gap: 6px; }
+
+.logo { width: 18px; height: 18px; object-fit: contain; }
+.logoPlaceholder {
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+
+.abbr { font-size: 12px; font-weight: 500; color: var(--text-secondary); width: 30px; }
+.score { font-size: 13px; font-weight: 600; color: var(--text-secondary); width: 22px; text-align: right; }
+.winner { color: var(--text-primary); }
+
+.meta { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.live {
+  font-size: 9px; font-weight: 700; color: #fff;
+  background: var(--brand-green); padding: 2px 5px;
+  border-radius: 3px; letter-spacing: 0.3px;
+}
+.clock, .time, .final { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+.final { font-weight: 500; }
