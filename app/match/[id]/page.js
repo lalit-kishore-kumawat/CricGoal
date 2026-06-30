@@ -68,26 +68,40 @@ function TabBar({ tabs, active, onChange }) {
 
 function FootballStats({ data }) {
   const teams = data?.header?.competitions?.[0]?.competitors || [];
-const stats = Array.isArray(data?.boxscore?.teams) ? data.boxscore.teams : [];
+  const stats = Array.isArray(data?.boxscore?.teams) ? data.boxscore.teams : [];
 
-  if (!stats.length) return <Empty msg="Stats not available for this match." />
+  // Safely look up the sub-statistics list array
+  const rawStatsList = stats[0]?.statistics;
+  const safeStatsList = Array.isArray(rawStatsList) ? rawStatsList : [];
+
+  if (!stats.length || !safeStatsList.length) {
+    return <Empty msg="Stats not available for this match." />;
+  }
+
   return (
     <div className={styles.statsWrap}>
       <div className={styles.statsTeamRow}>
         <span />
-        {teams.map(t => <span key={t.id} className={styles.statsTeamName}>{t.team?.abbreviation}</span>)}
+        {teams.map(t => (
+          <span key={t?.id || Math.random()} className={styles.statsTeamName}>
+            {t?.team?.abbreviation ?? ''}
+          </span>
+        ))}
       </div>
-      {stats[0]?.statistics?.map((stat, i) => (
+      {safeStatsList.map((stat, i) => (
         <div key={i} className={styles.statRow}>
-          <span className={styles.statLabel}>{stat.label}</span>
+          <span className={styles.statLabel}>{stat?.label ?? ''}</span>
           {stats.map((team, j) => (
-            <span key={j} className={styles.statValue}>{team.statistics?.[i]?.displayValue ?? '-'}</span>
+            <span key={j} className={styles.statValue}>
+              {team?.statistics?.[i]?.displayValue ?? '-'}
+            </span>
           ))}
         </div>
       ))}
     </div>
-  )
+  );
 }
+
 function FootballLineup({ data }) {
   // Safe extraction fallback check mapping for football data streams
   const rosters = data?.rosters || data?.roster || [];
@@ -96,35 +110,40 @@ function FootballLineup({ data }) {
   
   return (
     <div className={styles.lineupWrap}>
-      {rosters.map((team, i) => (
-        <div key={i} className={styles.lineupTeam}>
-          <div className={styles.lineupTeamName}>{team?.team?.displayName}</div>
-          <div className={styles.lineupHeader}><span>Player</span><span>#</span><span>Pos</span></div>
-          {team?.roster?.filter(p => p.starter).map((p, j) => (
-            <div key={j} className={styles.playerRow}>
-              <span className={styles.playerName}>{p?.athlete?.displayName}</span>
-              <span className={styles.playerNum}>{p?.jersey ?? '-'}</span>
-              <span className={styles.playerPos}>{p?.position?.abbreviation ?? ''}</span>
-            </div>
-          ))}
-          {(team?.roster?.filter(p => !p.starter) || []).length > 0 && (
-            <>
-              <div className={styles.subLabel}>Substitutes</div>
-              {team.roster.filter(p => !p.starter).map((p, j) => (
-                <div key={j} className={`${styles.playerRow} ${styles.sub}`}>
-                  <span className={styles.playerName}>{p?.athlete?.displayName}</span>
-                  <span className={styles.playerNum}>{p?.jersey ?? '-'}</span>
-                  <span className={styles.playerPos}>{p?.position?.abbreviation ?? ''}</span>
-                </div>
-              ))}
-            </>
-          )}
-        </div>
-      ))}
+      {rosters.map((team, i) => {
+        const rosterList = team?.roster || [];
+        const starters = rosterList.filter(p => p?.starter);
+        const substitutes = rosterList.filter(p => !p?.starter);
+
+        return (
+          <div key={i} className={styles.lineupTeam}>
+            <div className={styles.lineupTeamName}>{team?.team?.displayName}</div>
+            <div className={styles.lineupHeader}><span>Player</span><span>#</span><span>Pos</span></div>
+            {starters.map((p, j) => (
+              <div key={j} className={styles.playerRow}>
+                <span className={styles.playerName}>{p?.athlete?.displayName}</span>
+                <span className={styles.playerNum}>{p?.jersey ?? '-'}</span>
+                <span className={styles.playerPos}>{p?.position?.abbreviation ?? ''}</span>
+              </div>
+            ))}
+            {substitutes.length > 0 && (
+              <>
+                <div className={styles.subLabel}>Substitutes</div>
+                {substitutes.map((p, j) => (
+                  <div key={j} className={`${styles.playerRow} ${styles.sub}`}>
+                    <span className={styles.playerName}>{p?.athlete?.displayName}</span>
+                    <span className={styles.playerNum}>{p?.jersey ?? '-'}</span>
+                    <span className={styles.playerPos}>{p?.position?.abbreviation ?? ''}</span>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        );
+      })}
     </div>
   )
 }
-
 
 function CricketScorecard({ data }) {
   const innings = data.innings || []
