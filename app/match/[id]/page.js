@@ -14,7 +14,7 @@ function fmt(date) {
 }
 
 function MatchHeader({ data }) {
-  const comp   = data.header?.competitions?.[0]
+  const comp   = data?.header?.competitions?.[0]
   const home   = comp?.competitors?.find(c => c.homeAway === 'home')
   const away   = comp?.competitors?.find(c => c.homeAway === 'away')
   const status = comp?.status
@@ -57,7 +57,7 @@ function MatchHeader({ data }) {
 function TabBar({ tabs, active, onChange }) {
   return (
     <div className={styles.tabBar}>
-      {tabs.map(t => (
+      {(tabs || []).map(t => (
         <button key={t} className={`${styles.tab} ${active === t ? styles.tabActive : ''}`} onClick={() => onChange(t)}>
           {t}
         </button>
@@ -70,7 +70,7 @@ function FootballStats({ data }) {
   const teams = data?.header?.competitions?.[0]?.competitors || [];
   const stats = Array.isArray(data?.boxscore?.teams) ? data.boxscore.teams : [];
 
-  // Safely look up the sub-statistics list array
+  // Safely grab the statistics array array
   const rawStatsList = stats[0]?.statistics;
   const safeStatsList = Array.isArray(rawStatsList) ? rawStatsList : [];
 
@@ -103,7 +103,6 @@ function FootballStats({ data }) {
 }
 
 function FootballLineup({ data }) {
-  // Safe extraction fallback check mapping for football data streams
   const rosters = data?.rosters || data?.roster || [];
   
   if (!rosters || !rosters.length) return <Empty msg="Lineups not available yet." />
@@ -146,23 +145,23 @@ function FootballLineup({ data }) {
 }
 
 function CricketScorecard({ data }) {
-  const innings = data.innings || []
+  const innings = data?.innings || []
   if (!innings.length) return <Empty msg="Scorecard not available yet." />
   return (
     <div>
       {innings.map((inn, i) => (
         <div key={i} className={styles.innings}>
           <div className={styles.inningsTitle}>
-            {inn.team?.displayName} — {inn.runs}/{inn.wickets} ({inn.overs} ov)
+            {inn?.team?.displayName} — {inn?.runs}/{inn?.wickets} ({inn?.overs} ov)
           </div>
           <table className={styles.scoreTable}>
             <thead><tr><th>Batter</th><th>R</th><th>B</th><th>4s</th><th>6s</th><th>SR</th></tr></thead>
             <tbody>
-              {inn.batsmen?.map((b, j) => (
+              {(inn?.batsmen || []).map((b, j) => (
                 <tr key={j}>
-                  <td><div className={styles.batsmanName}>{b.athlete?.displayName}</div><div className={styles.dismissal}>{b.dismissal}</div></td>
-                  <td className={styles.boldStat}>{b.runs}</td>
-                  <td>{b.balls}</td><td>{b.fours}</td><td>{b.sixes}</td><td>{b.strikerate}</td>
+                  <td><div className={styles.batsmanName}>{b?.athlete?.displayName}</div><div className={styles.dismissal}>{b?.dismissal}</div></td>
+                  <td className={styles.boldStat}>{b?.runs}</td>
+                  <td>{b?.balls}</td><td>{b?.fours}</td><td>{b?.sixes}</td><td>{b?.strikerate}</td>
                 </tr>
               ))}
             </tbody>
@@ -170,11 +169,11 @@ function CricketScorecard({ data }) {
           <table className={styles.scoreTable} style={{ marginTop: 12 }}>
             <thead><tr><th>Bowler</th><th>O</th><th>M</th><th>R</th><th>W</th><th>Econ</th></tr></thead>
             <tbody>
-              {inn.bowlers?.map((b, j) => (
+              {(inn?.bowlers || []).map((b, j) => (
                 <tr key={j}>
-                  <td className={styles.batsmanName}>{b.athlete?.displayName}</td>
-                  <td>{b.overs}</td><td>{b.maidens}</td><td>{b.runs}</td>
-                  <td className={styles.boldStat}>{b.wickets}</td><td>{b.economy}</td>
+                  <td className={styles.batsmanName}>{b?.athlete?.displayName}</td>
+                  <td>{b?.overs}</td><td>{b?.maidens}</td><td>{b?.runs}</td>
+                  <td className={styles.boldStat}>{b?.wickets}</td><td>{b?.economy}</td>
                 </tr>
               ))}
             </tbody>
@@ -186,15 +185,15 @@ function CricketScorecard({ data }) {
 }
 
 function PlayByPlay({ data }) {
-  const plays = data.plays || []
+  const plays = data?.plays || []
   if (!plays.length) return <Empty msg="No play-by-play data available." />
   return (
     <div className={styles.pbp}>
       {plays.slice(0, 30).map((play, i) => (
         <div key={i} className={styles.pbpRow}>
-          <span className={styles.pbpTime}>{play.clock?.displayValue || play.period?.displayValue}</span>
-          {play.scoringPlay && <span className={styles.goalBadge}>⚽ GOAL</span>}
-          <span className={styles.pbpText}>{play.text}</span>
+          <span className={styles.pbpTime}>{play?.clock?.displayValue || play?.period?.displayValue}</span>
+          {play?.scoringPlay && <span className={styles.goalBadge}>⚽ GOAL</span>}
+          <span className={styles.pbpText}>{play?.text}</span>
         </div>
       ))}
     </div>
@@ -221,6 +220,8 @@ export default function MatchPage() {
     : ['Stats', 'Lineups', 'Play-by-Play', 'Info']
 
   useEffect(() => {
+    if (!id) return
+    setLoading(true)
     fetch(`/api/match?id=${id}&sport=${sport}`)
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false) })
@@ -257,11 +258,11 @@ export default function MatchPage() {
                 {tab === 'Info'         && (
                   <div className={styles.infoGrid}>
                     {[
-                      ['Venue',      data.header?.competitions?.[0]?.venue?.fullName],
-                      ['Date',       fmt(data.header?.competitions?.[0]?.date)],
-                      ['Attendance', data.header?.competitions?.[0]?.attendance?.toLocaleString()],
-                      ['Broadcast',  data.header?.competitions?.[0]?.broadcasts?.[0]?.names?.[0]],
-                      ['Referee',    data.header?.competitions?.[0]?.officials?.[0]?.fullName],
+                      ['Venue',      data?.header?.competitions?.[0]?.venue?.fullName],
+                      ['Date',       fmt(data?.header?.competitions?.[0]?.date)],
+                      ['Attendance', data?.header?.competitions?.[0]?.attendance?.toLocaleString()],
+                      ['Broadcast',  data?.header?.competitions?.[0]?.broadcasts?.[0]?.names?.[0]],
+                      ['Referee',    data?.header?.competitions?.[0]?.officials?.[0]?.fullName],
                     ].map(([label, val]) => val ? (
                       <div key={label} className={styles.infoRow}>
                         <span className={styles.infoLabel}>{label}</span>
@@ -274,13 +275,13 @@ export default function MatchPage() {
             </div>
 
             <aside className={styles.aside}>
-              {data.news?.map((article, i) => (
-                <a key={i} href={article.links?.web?.href || '#'} target="_blank" rel="noopener noreferrer" className={styles.newsCard}>
-                  <span className={styles.newsTag}>{article.categories?.[0]?.description || 'News'}</span>
-                  <p className={styles.newsTitle}>{article.headline}</p>
+              {(data?.news || []).map((article, i) => (
+                <a key={i} href={article?.links?.web?.href || '#'} target="_blank" rel="noopener noreferrer" className={styles.newsCard}>
+                  <span className={styles.newsTag}>{article?.categories?.[0]?.description || 'News'}</span>
+                  <p className={styles.newsTitle}>{article?.headline}</p>
                 </a>
               ))}
-              {!data.news?.length && (
+              {!data?.news?.length && (
                 <div className={styles.newsCard}>
                   <span className={styles.newsTag}>CricGoal</span>
                   <p className={styles.newsTitle}>Live match coverage powered by ESPN data</p>
