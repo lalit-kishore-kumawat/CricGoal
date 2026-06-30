@@ -1,8 +1,10 @@
 'use client'
+
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import styles from './page.module.css'
+
 
 function fmt(date) {
   try {
@@ -13,7 +15,7 @@ function fmt(date) {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
-    })
+    }) 
   } catch {
     return ''
   }
