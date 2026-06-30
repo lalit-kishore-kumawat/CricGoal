@@ -62,7 +62,7 @@ export default function Home() {
         onSportChange={setActiveSport}
         onLeagueChange={setActiveLeague}
       />
-      <ScoresBar games={games} sport={activeSport} />
+      <ScoresBar games={games} sport={SPORT_MAP[activeSport]?.[activeLeague]?.scores} />
       <main className={styles.main}>
         <div className={styles.feed}>
           {loading ? (
