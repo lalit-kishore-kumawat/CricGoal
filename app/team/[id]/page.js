@@ -1,4 +1,3 @@
-import Link from 'next/link';
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
