@@ -1,3 +1,4 @@
+import Link from 'next/link'
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
@@ -20,59 +21,55 @@ function fmt(date) {
 }
 
 function MatchHeader({ data }) {
-  const competitions = data?.header?.competitions || []
-  const comp = competitions[0] || {}
-  const competitors = comp.competitors || []
-  const home = competitors.find((c) => c.homeAway === 'home') || {}
-  const away = competitors.find((c) => c.homeAway === 'away') || {}
-  const status = comp.status || {}
-  const statusType = status.type || {}
-
-  const isLive = statusType.name === 'STATUS_IN_PROGRESS'
-  const isFinal = statusType.name === 'STATUS_FINAL'
+  const comps  = data?.header?.competitions
+  const comp   = Array.isArray(comps) ? comps.at(0) : null
+  const home   = comp?.competitors?.find(c => c.homeAway === 'home')
+  const away   = comp?.competitors?.find(c => c.homeAway === 'away')
+  const status = comp?.status
+  const isLive  = status?.type?.name === 'STATUS_IN_PROGRESS'
+  const isFinal = status?.type?.name === 'STATUS_FINAL'
+  
+  // Safely grab the current sport type to pass to the team route parameters
+  const searchParams = useSearchParams()
+  const sport = searchParams.get('sport') || 'soccer/eng.1'
 
   return (
     <div className={styles.header}>
       <div className={styles.headerInner}>
-        <div className={styles.teamBlock}>
-          {away?.team?.logo ? (
-            <img src={away.team.logo} alt={away.team.displayName} className={styles.teamLogo} />
-          ) : (
-            <div className={styles.logoBox} style={{ background: `#${away?.team?.color || '555'}` }}>
-              {away?.team?.abbreviation ? away.team.abbreviation[0] : '?'}
-            </div>
-          )}
-          <div className={styles.teamName}>{away?.team?.displayName || 'TBD'}</div>
-          <div className={`${styles.teamScore} ${away?.winner ? styles.winner : ''}`}>
-            {away?.score ?? '-'}
-          </div>
-        </div>
+        
+        {/* AWAY TEAM CLICKABLE BLOCK */}
+        <Link href={`/team/${away?.team?.id}?sport=${sport}`} className={styles.teamBlock}>
+          {away?.team?.logo
+            ? <img src={away.team.logo} alt={away.team.displayName} className={styles.teamLogo} />
+            : <div className={styles.logoBox} style={{ background: `#${away?.team?.color || '555'}` }}>{away?.team?.abbreviation?.slice(0, 1) || ''}</div>
+          }
+          <div className={styles.teamName}>{away?.team?.displayName}</div>
+          <div className={`${styles.teamScore} ${away?.winner ? styles.winner : ''}`}>{away?.score ?? '-'}</div>
+        </Link>
 
         <div className={styles.centre}>
-          {isLive && <span className={styles.liveBadge}>● LIVE</span>}
+          {isLive  && <span className={styles.liveBadge}>● LIVE</span>}
           {isFinal && <span className={styles.finalBadge}>FINAL</span>}
           {!isLive && !isFinal && <span className={styles.scheduledBadge}>UPCOMING</span>}
-          <div className={styles.statusDetail}>{statusType.detail || ''}</div>
+          <div className={styles.statusDetail}>{status?.type?.detail || ''}</div>
           {comp?.venue?.fullName && <div className={styles.venue}>📍 {comp.venue.fullName}</div>}
         </div>
 
-        <div className={`${styles.teamBlock} ${styles.teamBlockRight}`}>
-          {home?.team?.logo ? (
-            <img src={home.team.logo} alt={home.team.displayName} className={styles.teamLogo} />
-          ) : (
-            <div className={styles.logoBox} style={{ background: `#${home?.team?.color || '555'}` }}>
-              {home?.team?.abbreviation ? home.team.abbreviation[0] : '?'}
-            </div>
-          )}
-          <div className={styles.teamName}>{home?.team?.displayName || 'TBD'}</div>
-          <div className={`${styles.teamScore} ${home?.winner ? styles.winner : ''}`}>
-            {home?.score ?? '-'}
-          </div>
-        </div>
+        {/* HOME TEAM CLICKABLE BLOCK */}
+        <Link href={`/team/${home?.team?.id}?sport=${sport}`} className={`${styles.teamBlock} ${styles.teamBlockRight}`}>
+          {home?.team?.logo
+            ? <img src={home.team.logo} alt={home.team.displayName} className={styles.teamLogo} />
+            : <div className={styles.logoBox} style={{ background: `#${home?.team?.color || '555'}` }}>{home?.team?.abbreviation?.slice(0, 1) || ''}</div>
+          }
+          <div className={styles.teamName}>{home?.team?.displayName}</div>
+          <div className={`${styles.teamScore} ${home?.winner ? styles.winner : ''}`}>{home?.score ?? '-'}</div>
+        </Link>
+
       </div>
     </div>
   )
 }
+
 
 function TabBar({ tabs, active, onChange }) {
   return (

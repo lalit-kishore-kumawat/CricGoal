@@ -1,0 +1,110 @@
+.page { min-height: 100vh; background: var(--bg); }
+
+.backBar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 20px; background: var(--surface);
+  border-bottom: 1px solid var(--espn-border);
+}
+.backBtn { font-size: 13px; font-weight: 600; color: var(--brand-green); text-decoration: none; transition: opacity 0.15s; }
+.backBtn:hover { opacity: 0.7; }
+.breadcrumb { font-size: 12px; color: var(--text-muted); }
+
+.header {
+  background: linear-gradient(135deg, var(--brand-green-dark), var(--brand-green));
+  padding: 28px 20px;
+}
+.headerInner {
+  max-width: 800px; margin: 0 auto;
+  display: flex; align-items: center; gap: 18px;
+}
+.teamLogo { width: 72px; height: 72px; object-fit: contain; }
+.logoBox {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 800; color: #fff;
+}
+.teamName { font-size: 22px; font-weight: 800; color: #fff; }
+.teamMeta { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 4px; }
+
+.body { max-width: 800px; margin: 20px auto; padding: 0 16px; }
+
+.tabBar {
+  display: flex; border-bottom: 2px solid var(--espn-border);
+  margin-bottom: 16px; overflow-x: auto; scrollbar-width: none;
+}
+.tabBar::-webkit-scrollbar { display: none; }
+.tab {
+  background: none; border: none; color: var(--text-muted);
+  font-size: 13px; font-weight: 600; padding: 10px 18px;
+  cursor: pointer; border-bottom: 2px solid transparent;
+  margin-bottom: -2px; transition: all 0.15s; white-space: nowrap;
+}
+.tab:hover { color: var(--text-primary); }
+.tabActive { color: var(--brand-green) !important; border-bottom-color: var(--brand-green) !important; }
+
+.tabContent {
+  background: var(--surface); border-radius: 10px;
+  border: 1px solid var(--espn-border); padding: 16px;
+}
+
+/* Roster */
+.rosterGrid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 14px;
+}
+.playerCard { text-align: center; }
+.playerImg {
+  width: 64px; height: 64px; border-radius: 50%;
+  object-fit: cover; margin: 0 auto 6px; display: block;
+  background: var(--bg);
+}
+.playerImgPlaceholder {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--bg); display: flex; align-items: center;
+  justify-content: center; font-size: 14px; font-weight: 700;
+  color: var(--text-muted); margin: 0 auto 6px;
+}
+.playerCardName {
+  font-size: 12px; font-weight: 600; color: var(--text-primary);
+  line-height: 1.3;
+}
+.playerCardPos { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* Schedule */
+.scheduleList { display: flex; flex-direction: column; }
+.scheduleRow {
+  display: grid; grid-template-columns: 90px 1fr 100px;
+  align-items: center; padding: 10px 0;
+  border-bottom: 1px solid var(--espn-border); font-size: 13px;
+}
+.scheduleRow:last-child { border-bottom: none; }
+.scheduleDate { color: var(--text-muted); font-size: 12px; }
+.scheduleMatchup { color: var(--text-primary); font-weight: 500; }
+.scheduleResult { color: var(--text-secondary); text-align: right; font-weight: 600; font-size: 12px; }
+
+/* Stats */
+.statsGrid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+}
+.statBox {
+  background: var(--bg); border-radius: 8px;
+  padding: 12px 8px; text-align: center;
+}
+.statValue { font-size: 18px; font-weight: 800; color: var(--brand-green); }
+.statLabel { font-size: 10px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; }
+
+/* Shared */
+.empty { color: var(--text-muted); font-size: 13px; padding: 30px 0; text-align: center; }
+.loadingWrap {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 14px; padding: 60px 20px;
+  color: var(--text-muted); font-size: 14px;
+}
+.spinner {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid var(--espn-border); border-top-color: var(--brand-green);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.error { color: #e53e3e; text-align: center; padding: 40px; font-size: 14px; }

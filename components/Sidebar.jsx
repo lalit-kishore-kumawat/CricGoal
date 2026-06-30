@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import styles from './Sidebar.module.css'
 
 const CRICKET_TRENDING = [
@@ -29,16 +30,20 @@ export default function Sidebar({ standings = [], sport, league }) {
               const losses = entry.stats?.find(s => s.name === 'losses')?.value || 0
               const team   = entry.team || {}
               return (
-                <div key={team.id || i} className={styles.standRow}>
-                  <span className={styles.rank}>{i + 1}</span>
-                  {team.logo
-                    ? <img src={team.logo} alt={team.name} className={styles.teamLogo} />
-                    : <div className={styles.teamLogoPlaceholder} style={{ background: `#${team.color || '1a6b3c'}` }}>{team.abbreviation?.[0] || '?'}</div>
-                  }
-                  <span className={styles.teamName}>{team.shortDisplayName || team.displayName}</span>
-                  <span className={styles.wl}>{wins}</span>
-                  <span className={styles.wlMuted}>{losses}</span>
-                </div>
+            <Link key={team.id || i} href={`/team/${team.id}?sport=${sport}`} className={styles.standRow}>
+  <span className={styles.rank}>{i + 1}</span>
+  {team.logo ? (
+    <img src={team.logo} alt={team.name} className={styles.teamLogo} />
+  ) : (
+    <div className={styles.teamLogoPlaceholder} style={{ background: `#${team.color || '555'}` }}>
+      {team.displayName?.slice(0, 1) || ''}
+    </div>
+  )}
+  <span className={styles.teamName}>{team.shortDisplayName || team.displayName}</span>
+  <span className={styles.wl}>{team.wins || 0}</span>
+  <span className={styles.wlMuted}>{team.losses || 0}</span>
+</Link>
+
               )
             })}
           </>
