@@ -67,8 +67,9 @@ function TabBar({ tabs, active, onChange }) {
 }
 
 function FootballStats({ data }) {
-  const teams = data.header?.competitions?.[0]?.competitors || []
-  const stats = data.boxscore?.teams || []
+  const teams = data?.header?.competitions?.[0]?.competitors || [];
+const stats = Array.isArray(data?.boxscore?.teams) ? data.boxscore.teams : [];
+
   if (!stats.length) return <Empty msg="Stats not available for this match." />
   return (
     <div className={styles.statsWrap}>
@@ -87,31 +88,33 @@ function FootballStats({ data }) {
     </div>
   )
 }
-
 function FootballLineup({ data }) {
-  const rosters = data.rosters || []
-  if (!rosters.length) return <Empty msg="Lineups not available yet." />
+  // Safe extraction fallback check mapping for football data streams
+  const rosters = data?.rosters || data?.roster || [];
+  
+  if (!rosters || !rosters.length) return <Empty msg="Lineups not available yet." />
+  
   return (
     <div className={styles.lineupWrap}>
       {rosters.map((team, i) => (
         <div key={i} className={styles.lineupTeam}>
-          <div className={styles.lineupTeamName}>{team.team?.displayName}</div>
+          <div className={styles.lineupTeamName}>{team?.team?.displayName}</div>
           <div className={styles.lineupHeader}><span>Player</span><span>#</span><span>Pos</span></div>
-          {team.roster?.filter(p => p.starter).map((p, j) => (
+          {team?.roster?.filter(p => p.starter).map((p, j) => (
             <div key={j} className={styles.playerRow}>
-              <span className={styles.playerName}>{p.athlete?.displayName}</span>
-              <span className={styles.playerNum}>{p.jersey}</span>
-              <span className={styles.playerPos}>{p.position?.abbreviation}</span>
+              <span className={styles.playerName}>{p?.athlete?.displayName}</span>
+              <span className={styles.playerNum}>{p?.jersey ?? '-'}</span>
+              <span className={styles.playerPos}>{p?.position?.abbreviation ?? ''}</span>
             </div>
           ))}
-          {team.roster?.filter(p => !p.starter).length > 0 && (
+          {(team?.roster?.filter(p => !p.starter) || []).length > 0 && (
             <>
               <div className={styles.subLabel}>Substitutes</div>
-              {team.roster?.filter(p => !p.starter).map((p, j) => (
+              {team.roster.filter(p => !p.starter).map((p, j) => (
                 <div key={j} className={`${styles.playerRow} ${styles.sub}`}>
-                  <span className={styles.playerName}>{p.athlete?.displayName}</span>
-                  <span className={styles.playerNum}>{p.jersey}</span>
-                  <span className={styles.playerPos}>{p.position?.abbreviation}</span>
+                  <span className={styles.playerName}>{p?.athlete?.displayName}</span>
+                  <span className={styles.playerNum}>{p?.jersey ?? '-'}</span>
+                  <span className={styles.playerPos}>{p?.position?.abbreviation ?? ''}</span>
                 </div>
               ))}
             </>
@@ -121,6 +124,7 @@ function FootballLineup({ data }) {
     </div>
   )
 }
+
 
 function CricketScorecard({ data }) {
   const innings = data.innings || []
