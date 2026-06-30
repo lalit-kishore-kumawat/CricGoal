@@ -1,3 +1,4 @@
+import Link from 'next/link';
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
@@ -60,16 +61,18 @@ function TabBar({ tabs, active, onChange }) {
 }
 
 function Roster({ team }) {
-  const athletes = team?.athletes || []
+  const athletes = team?.roster || [];
+  const searchParams = useSearchParams();
+  const sport = searchParams.get('sport') || 'soccer/eng.1';
 
-  if (!Array.isArray(athletes) || athletes.length === 0) {
+  if (!Array.isArray(athletes) || !athletes.length) {
     return <Empty msg="Roster not available for this team." />
   }
 
   return (
     <div className={styles.rosterGrid}>
       {athletes.map((p, i) => (
-        <div key={p?.id || i} className={styles.playerCard}>
+        <Link key={p?.id || i} href={`/player/${p?.id}?sport=${sport}`} className={styles.playerCard}>
           {p?.headshot?.href ? (
             <img src={p.headshot.href} alt={p.displayName} className={styles.playerImg} />
           ) : (
@@ -79,7 +82,7 @@ function Roster({ team }) {
           <div className={styles.playerCardPos}>
             {p?.position?.abbreviation || ''} {p?.jersey ? `· #${p.jersey}` : ''}
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   )
