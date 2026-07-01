@@ -127,7 +127,7 @@ function Stats({ team }) {
     <div className={styles.statsGrid}>
       {record.map((stat, i) => (
         <div key={i} className={styles.statBox}>
-          <div className={styles.statValue}>{stat?.displayValue ?? '-'}</div>
+          <div className={styles.statValue}>{stat?.displayValue ?? stat?.value ?? '-'}</div>
           <div className={styles.statLabel}>{stat?.shortDisplayName || stat?.name || ''}</div>
         </div>
       ))}

@@ -102,6 +102,9 @@ function FootballStats({ data }) {
   }
 
   const firstTeamStats = boxscoreTeams[0]?.statistics || []
+  if (firstTeamStats.length === 0) {
+  return <Empty msg="Stats will be available once the match starts." />
+}
 
   return (
     <div className={styles.statsWrap}>

@@ -11,18 +11,19 @@ export async function GET(request) {
   }
 
   try {
-    const [teamRes, scheduleRes] = await Promise.all([
-      fetch(`${ESPN}/${sport}/teams/${id}`, { next: { revalidate: 3600 } }),
-      fetch(`${ESPN}/${sport}/teams/${id}/schedule`, { next: { revalidate: 1800 } }),
-    ])
+    const [teamRes, scheduleRes, rosterRes] = await Promise.all([
+  fetch(`${ESPN}/${sport}/teams/${id}`, { next: { revalidate: 3600 } }),
+  fetch(`${ESPN}/${sport}/teams/${id}/schedule`, { next: { revalidate: 1800 } }),
+  fetch(`${ESPN}/${sport}/teams/${id}/roster`, { next: { revalidate: 3600 } }),
+])
+   const teamData = await teamRes.json()
+const scheduleData = await scheduleRes.json().catch(() => ({}))
+const rosterData = await rosterRes.json().catch(() => ({}))
 
-    const teamData = await teamRes.json()
-    const scheduleData = await scheduleRes.json().catch(() => ({}))
-
-    return Response.json({
-      team: teamData?.team || null,
-      schedule: scheduleData?.events || [],
-    })
+return Response.json({
+  team: { ...(teamData?.team || {}), athletes: rosterData?.athletes || [] },
+ schedule: scheduleData?.events || scheduleData?.team?.events || [],
+})
   } catch (e) {
     return Response.json({ error: 'Failed to fetch team' }, { status: 500 })
   }
