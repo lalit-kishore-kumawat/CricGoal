@@ -24,7 +24,13 @@ const athletes = rosterData?.athletes || []
 
 return Response.json({
   team: { ...(teamData?.team || {}), athletes },
- schedule: scheduleData?.events || scheduleData?.team?.events || [],
+ // Replace your current schedule line with this robust fallback sequence:
+schedule: scheduleData?.events || 
+          scheduleData?.team?.events || 
+          scheduleData?.requestedSeason?.events || 
+          teamData?.team?.nextEvents || 
+          [],
+
 })
   } catch (e) {
     return Response.json({ error: 'Failed to fetch team' }, { status: 500 })
