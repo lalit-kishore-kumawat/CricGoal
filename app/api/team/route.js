@@ -21,7 +21,7 @@ const scheduleData = await scheduleRes.json().catch(() => ({}))
 const rosterData = await rosterRes.json().catch(() => ({}))
 
 return Response.json({
-  team: { ...(teamData?.team || {}), athletes: rosterData?.athletes || [] },
+team: { ...(teamData?.team || {}), athletes: rosterData?.athletes?.flatMap(g => g?.items || []) || [] },
  schedule: scheduleData?.events || scheduleData?.team?.events || [],
 })
   } catch (e) {

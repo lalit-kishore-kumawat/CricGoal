@@ -60,7 +60,7 @@ function TabBar({ tabs, active, onChange }) {
 }
 
 function Roster({ team }) {
-  const athletes = team?.roster || [];
+const athletes = team?.athletes || []
   const searchParams = useSearchParams();
   const sport = searchParams.get('sport') || 'soccer/eng.1';
 
