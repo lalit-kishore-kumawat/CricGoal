@@ -16,19 +16,21 @@ export async function GET(request) {
     const data = await res.json()
 
     // Filter only cricket and football related results
-    const results = (data?.items || [])
-      .filter(item => {
-        const sport = item?.sport?.toLowerCase() || ''
-        const league = item?.league?.toLowerCase() || ''
-        return (
-          sport.includes('cricket') ||
-          sport.includes('soccer') ||
-          league.includes('cricket') ||
-          league.includes('soccer') ||
-          league.includes('eng.1') ||
-          league.includes('ipl')
-        )
-      })
+   const results = (data?.items || [])
+  .filter(item => {
+    const uid = (item?.uid || '').toLowerCase()
+    const lang = (item?.language || '').toLowerCase()
+    const name = (item?.displayName || '').toLowerCase()
+    const type = (item?.type || '').toLowerCase()
+    return (
+      uid.includes('cricket') ||
+      uid.includes('soccer') ||
+      uid.includes('football') ||
+      lang.includes('cricket') ||
+      type === 'athlete' ||
+      type === 'team'
+    )
+  })
       .slice(0, 8)
       .map(item => ({
         id: item?.id,

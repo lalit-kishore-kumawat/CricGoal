@@ -7,8 +7,14 @@ export async function GET(request) {
 
   try {
     const res = await fetch(url, { next: { revalidate: 300 } })
-    const data = await res.json()
-    return Response.json(data.articles?.slice(0, 8) || [])
+   const data = await res.json()
+const articles = data.articles?.slice(0, 8) || []
+if (articles.length === 0 && sport.includes('cricket')) {
+  const fallback = await fetch(`${ESPN}/cricket/news`, { next: { revalidate: 300 } })
+  const fallbackData = await fallback.json()
+  return Response.json(fallbackData.articles?.slice(0, 8) || [])
+}
+return Response.json(articles)
   } catch (e) {
     return Response.json([])
   }

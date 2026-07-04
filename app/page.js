@@ -9,12 +9,12 @@ import styles from './page.module.css'
 // Map sport + league to ESPN API slugs
 const SPORT_MAP = {
   cricket: {
-    IPL:  { scores: 'cricket/ipl', news: 'cricket' },
-    ICC:  { scores: 'cricket/icc-mens-t20-world-cup', news: 'cricket' },
-    Test: { scores: 'cricket/international-test', news: 'cricket' },
-    ODI:  { scores: 'cricket/international-odi', news: 'cricket' },
-    T20I: { scores: 'cricket/international-t20', news: 'cricket' },
-  },
+  IPL:  { scores: 'cricket/ipl', news: 'cricket' },
+  ICC:  { scores: 'cricket/icc-cricket-world-cup', news: 'cricket' },
+  Test: { scores: 'cricket/international-test', news: 'cricket' },
+  ODI:  { scores: 'cricket/international-odi', news: 'cricket' },
+  T20I: { scores: 'cricket/international-t20', news: 'cricket' },
+},
   football: {
     'Premier League': { scores: 'soccer/eng.1', news: 'soccer/eng.1' },
     'La Liga':        { scores: 'soccer/esp.1', news: 'soccer/esp.1' },
