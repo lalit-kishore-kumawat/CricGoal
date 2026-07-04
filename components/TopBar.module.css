@@ -8,30 +8,14 @@
 }
 
 .logoWrap { display: flex; align-items: baseline; gap: 6px; flex-shrink: 0; }
-
-.logo {
-  color: #fff;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.logoTag {
-  font-size: 16px;
-}
+.logo { color: #fff; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.logoTag { font-size: 16px; }
 
 .navLinks { display: flex; gap: 2px; margin-left: 8px; }
-
 .navBtn {
-  background: none;
-  border: none;
-  color: rgba(255,255,255,0.8);
-  font-size: 13px;
-  font-weight: 500;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.15s;
+  background: none; border: none; color: rgba(255,255,255,0.8);
+  font-size: 13px; font-weight: 500; padding: 6px 12px;
+  border-radius: 6px; cursor: pointer; transition: all 0.15s;
 }
 .navBtn:hover { background: rgba(255,255,255,0.15); color: #fff; }
 .navBtn.active { background: rgba(255,255,255,0.2); color: #fff; }
@@ -39,99 +23,119 @@
 .actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
 .iconBtn {
-  background: none;
-  border: none;
-  color: rgba(255,255,255,0.85);
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  transition: background 0.15s;
+  background: none; border: none; color: rgba(255,255,255,0.85);
+  cursor: pointer; padding: 6px; border-radius: 6px;
+  display: flex; align-items: center; transition: background 0.15s;
 }
 .iconBtn:hover { background: rgba(255,255,255,0.15); }
 
 .avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.2);
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); border: none; color: #fff;
+  cursor: pointer; display: flex; align-items: center;
+  justify-content: center; transition: background 0.15s;
 }
 .avatar:hover { background: rgba(255,255,255,0.3); }
 
-.searchBar { background: var(--brand-green-dark); padding: 8px 20px; }
-.searchInput {
-  width: 100%;
-  max-width: 500px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: #fff;
-  font-size: 14px;
-  outline: none;
+/* ── Search ──────────────────────────────────────── */
+.searchWrap {
+  background: var(--brand-green-dark);
+  padding: 8px 16px;
+  position: relative;
 }
-.searchInput::placeholder { color: rgba(255,255,255,0.6); }
-.searchInput:focus { background: rgba(255,255,255,0.2); }
 
-/* Sport toggle */
+.searchBarInner {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 8px; padding: 8px 12px;
+  max-width: 600px;
+}
+
+.searchInput {
+  flex: 1; background: none; border: none;
+  color: #fff; font-size: 14px; outline: none;
+}
+.searchInput::placeholder { color: rgba(255,255,255,0.55); }
+
+.searchSpinner {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  animation: spin 0.7s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.searchClose {
+  background: none; border: none; color: rgba(255,255,255,0.6);
+  cursor: pointer; font-size: 14px; padding: 0 2px;
+  transition: color 0.15s; flex-shrink: 0;
+}
+.searchClose:hover { color: #fff; }
+
+/* Dropdown */
+.dropdown {
+  position: absolute; top: calc(100% - 4px); left: 16px;
+  width: min(600px, calc(100vw - 32px));
+  background: var(--surface); border-radius: 10px;
+  border: 1px solid var(--espn-border);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 100; overflow: hidden;
+}
+
+.dropdownEmpty {
+  padding: 16px; font-size: 13px; color: var(--text-muted);
+  text-align: center;
+}
+
+.dropdownItem {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 10px 14px;
+  background: none; border: none; border-bottom: 1px solid var(--espn-border);
+  cursor: pointer; text-align: left; transition: background 0.12s;
+}
+.dropdownItem:last-child { border-bottom: none; }
+.dropdownItem:hover { background: var(--bg); }
+
+.dropdownIcon {
+  width: 28px; height: 28px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.dropdownLogo { width: 24px; height: 24px; object-fit: contain; }
+.dropdownName { flex: 1; font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.dropdownType {
+  font-size: 10px; font-weight: 600; color: var(--brand-green);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* ── Sport toggle ────────────────────────────────── */
 .sportToggle {
   background: var(--brand-green-dark);
-  display: flex;
-  padding: 6px 16px;
-  gap: 8px;
+  display: flex; padding: 6px 16px; gap: 8px;
   border-bottom: 2px solid rgba(255,255,255,0.1);
 }
-
 .sportBtn {
-  background: rgba(255,255,255,0.1);
-  border: none;
-  color: rgba(255,255,255,0.75);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 18px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.15s;
+  background: rgba(255,255,255,0.1); border: none;
+  color: rgba(255,255,255,0.75); font-size: 13px; font-weight: 600;
+  padding: 6px 18px; border-radius: 20px; cursor: pointer; transition: all 0.15s;
 }
 .sportBtn:hover { background: rgba(255,255,255,0.2); color: #fff; }
-.sportBtn.sportActive {
-  background: var(--brand-gold);
-  color: #1a1a1a;
-}
+.sportBtn.sportActive { background: var(--brand-gold); color: #1a1a1a; }
 
-/* League subnav */
+/* ── League subnav ───────────────────────────────── */
 .subnav {
-  background: #1a1a1a;
-  display: flex;
-  gap: 2px;
-  padding: 0 12px;
-  height: 36px;
-  align-items: center;
-  overflow-x: auto;
-  scrollbar-width: none;
+  background: #1a1a1a; display: flex; gap: 2px;
+  padding: 0 12px; height: 36px; align-items: center;
+  overflow-x: auto; scrollbar-width: none;
 }
 .subnav::-webkit-scrollbar { display: none; }
 
 .leagueTab {
-  background: none;
-  border: none;
-  color: rgba(255,255,255,0.6);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 5px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s;
-  flex-shrink: 0;
+  background: none; border: none; color: rgba(255,255,255,0.6);
+  font-size: 12px; font-weight: 500; padding: 5px 12px;
+  border-radius: 5px; cursor: pointer; white-space: nowrap;
+  transition: all 0.15s; flex-shrink: 0;
 }
 .leagueTab:hover { color: #fff; background: rgba(255,255,255,0.1); }
 .leagueTab.leagueActive { color: #fff; background: var(--brand-green); }
