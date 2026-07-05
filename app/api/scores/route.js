@@ -1,52 +1,47 @@
-// Uses ESPN's unified API for BOTH cricket and football.
-// Cricket slugs: cricket/ipl, cricket/icc-cricket-world-cup, cricket/international-test, etc.
-// Football slugs: soccer/eng.1, soccer/esp.1, etc.
+import { getCurrentMatches, mapMatchToEvent } from '../../../lib/cricapi'
+
 const ESPN = 'https://site.api.espn.com/apis/site/v2/sports'
 
-// Fallback league if the primary one has no live matches (e.g. IPL off-season)
-const CRICKET_FALLBACK = [
-  'cricket/international-t20',
-  'cricket/international-odi',
-  'cricket/international-test',
-]
+// Filter functions — which CricAPI matches belong to which league tab
+const LEAGUE_FILTERS = {
+  'cricket/ipl':                   m => m.matchType === 't20' && /ipl/i.test(m.name),
+  'cricket/icc-cricket-world-cup': m => /world.?cup/i.test(m.name),
+  'cricket/international-test':    m => m.matchType === 'test',
+  'cricket/international-odi':     m => m.matchType === 'odi',
+  'cricket/international-t20':     m => m.matchType === 't20',
+}
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const sport = searchParams.get('sport') || 'soccer/eng.1'
 
-  // ── Cricket ───────────────────────────────────────────────────────────────
+  // ── Cricket via CricAPI ───────────────────────────────────────────────────
   if (sport.startsWith('cricket')) {
     try {
-      // Primary: requested league
-      const res  = await fetch(`${ESPN}/${sport}/scoreboard`, { next: { revalidate: 30 } })
-      const data = await res.json()
-      const events = data?.events || []
+      const allMatches = await getCurrentMatches()
+      const filter     = LEAGUE_FILTERS[sport]
 
-      // Fallback: if no matches in primary league, try international formats
-      if (events.length === 0) {
-        for (const fallback of CRICKET_FALLBACK) {
-          if (fallback === sport) continue
-          try {
-            const fb   = await fetch(`${ESPN}/${fallback}/scoreboard`, { next: { revalidate: 30 } })
-            const fbData = await fb.json()
-            const fbEvents = fbData?.events || []
-            if (fbEvents.length > 0) return Response.json(fbEvents.slice(0, 10))
-          } catch { continue }
-        }
+      // Try the specific league filter first
+      let matches = filter ? allMatches.filter(filter) : allMatches
+
+      // If no matches for this specific league, fall back to ALL cricket matches
+      // so the scores bar is never completely empty (e.g. IPL off-season)
+      if (matches.length === 0) {
+        matches = allMatches
       }
 
-      return Response.json(events.slice(0, 10))
-    } catch (e) {
+      return Response.json(matches.slice(0, 10).map(mapMatchToEvent))
+    } catch {
       return Response.json([])
     }
   }
 
-  // ── Football ──────────────────────────────────────────────────────────────
+  // ── Football via ESPN ─────────────────────────────────────────────────────
   try {
     const res  = await fetch(`${ESPN}/${sport}/scoreboard`, { next: { revalidate: 30 } })
     const data = await res.json()
     return Response.json(data.events || [])
-  } catch (e) {
+  } catch {
     return Response.json([])
   }
 }

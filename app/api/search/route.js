@@ -1,5 +1,5 @@
-// ESPN's unified search API — works for both cricket and football.
-// cricket results have uid like 's:64~...' (sport id 64 = cricket on ESPN)
+import { searchPlayers } from '../../../lib/cricapi'
+
 const ESPN_SEARCH = 'https://site.api.espn.com/apis/common/v3/search'
 
 export async function GET(request) {
@@ -11,21 +11,34 @@ export async function GET(request) {
 
   const isCricket = sport === 'cricket'
 
+  // ── Cricket search via CricAPI ────────────────────────────────────────────
+  if (isCricket) {
+    try {
+      const players = await searchPlayers(query)
+      const results = players.slice(0, 8).map(p => ({
+        id:     p?.id         || '',
+        name:   p?.name       || '',
+        type:   'athlete',
+        sport:  'cricket',
+        league: 'cricket/ipl',
+        logo:   p?.playerImg  || '',
+      }))
+      return Response.json({ results })
+    } catch {
+      return Response.json({ results: [] })
+    }
+  }
+
+  // ── Football search via ESPN ──────────────────────────────────────────────
   try {
-    const res  = await fetch(
+    const res = await fetch(
       `${ESPN_SEARCH}?query=${encodeURIComponent(query)}&limit=15&mode=prefix`,
       { next: { revalidate: 60 } }
     )
     const data = await res.json()
-
     const results = (data?.items || [])
       .filter(item => {
-        const uid  = (item?.uid  || '').toLowerCase()
-        const type = (item?.type || '').toLowerCase()
-        if (isCricket) {
-          // ESPN cricket sport id = 64; also catch uid patterns
-          return uid.includes('cricket') || uid.startsWith('s:64~')
-        }
+        const uid = (item?.uid || '').toLowerCase()
         return uid.includes('soccer') || uid.includes('football')
       })
       .slice(0, 8)
@@ -33,13 +46,12 @@ export async function GET(request) {
         id:     item?.id     || '',
         name:   item?.displayName || item?.name || '',
         type:   item?.type   || 'team',
-        sport:  isCricket ? 'cricket' : 'soccer',
-        league: isCricket ? 'cricket/ipl' : 'soccer/eng.1',
-        logo:   item?.images?.[0]?.url || item?.logo || '',
+        sport:  'soccer',
+        league: 'soccer/eng.1',
+        logo:   item?.images?.[0]?.url || '',
       }))
-
     return Response.json({ results })
-  } catch (e) {
+  } catch {
     return Response.json({ results: [] })
   }
 }
