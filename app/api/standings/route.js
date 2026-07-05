@@ -1,40 +1,38 @@
-const ESPN = 'https://espn.com'
-const CRICINFO_RANKINGS = 'https://espncricinfo.com'
+const ESPN = 'https://site.api.espn.com/apis/site/v2/sports'
+const CRICINFO_RANKINGS = 'https://hs-consumer-api.espncricinfo.com/v1/pages/rankings/team?formatId=3'
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const sport = searchParams.get('sport') || 'soccer/eng.1'
 
-  // 🏏 1. Handle Cricket Rankings from Cricinfo
   if (sport.startsWith('cricket')) {
     try {
       const res = await fetch(CRICINFO_RANKINGS, { next: { revalidate: 86400 } })
       const data = await res.json()
-      
-      // Extract the top international team ranks to mimic your sidebar schema
-      const ranks = (data?.content?.ranks || []).map(r => ({
-        id: r?.team?.id || '',
-        name: r?.team?.name || 'TBD',
-        position: r?.rank || '-',
+      const ranks = (data?.content?.ranks || []).slice(0, 8).map(r => ({
+        team: {
+          id: r?.team?.objectId || '',
+          displayName: r?.team?.name || 'TBD',
+          shortDisplayName: r?.team?.abbreviation || r?.team?.name || 'TBD',
+          logo: r?.team?.imageUrl || '',
+          color: '1a6b3c',
+        },
         stats: [
-          { name: 'points', value: r?.points || 0 },
-          { name: 'rating', value: r?.rating || 0 }
-        ]
-      })).slice(0, 10)
-
-      return Response.json({ standings: [{ name: 'ICC Rankings', rows: ranks }] })
+          { name: 'wins', displayValue: String(r?.points || 0) },
+          { name: 'losses', displayValue: String(r?.rating || 0) },
+        ],
+      }))
+      return Response.json([{ standings: { entries: ranks } }])
     } catch (e) {
-      return Response.json({ standings: [] })
+      return Response.json([])
     }
   }
 
-  // ⚽ 2. Handle Football Standings from standard ESPN
   try {
     const res = await fetch(`${ESPN}/${sport}/standings`, { next: { revalidate: 3600 } })
     const data = await res.json()
-    return Response.json(data)
+    return Response.json(data.children || [])
   } catch (e) {
-    return Response.json({ standings: [] })
+    return Response.json([])
   }
 }
-
