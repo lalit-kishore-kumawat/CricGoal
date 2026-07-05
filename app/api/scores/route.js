@@ -1,77 +1,49 @@
+// Uses ESPN's unified API for BOTH cricket and football.
+// Cricket slugs: cricket/ipl, cricket/icc-cricket-world-cup, cricket/international-test, etc.
+// Football slugs: soccer/eng.1, soccer/esp.1, etc.
 const ESPN = 'https://site.api.espn.com/apis/site/v2/sports'
-const CRICINFO = 'https://hs-consumer-api.espncricinfo.com/v1/pages/matches/current'
 
-const CRICINFO_HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  'Referer': 'https://www.espncricinfo.com/',
-  'Origin': 'https://www.espncricinfo.com',
-  'Accept': 'application/json',
-}
+// Fallback league if the primary one has no live matches (e.g. IPL off-season)
+const CRICKET_FALLBACK = [
+  'cricket/international-t20',
+  'cricket/international-odi',
+  'cricket/international-test',
+]
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const sport = searchParams.get('sport') || 'soccer/eng.1'
 
+  // ── Cricket ───────────────────────────────────────────────────────────────
   if (sport.startsWith('cricket')) {
     try {
-      const res = await fetch(CRICINFO, { headers: CRICINFO_HEADERS, next: { revalidate: 60 } })
+      // Primary: requested league
+      const res  = await fetch(`${ESPN}/${sport}/scoreboard`, { next: { revalidate: 30 } })
       const data = await res.json()
-      const matches = (data?.content?.matches || []).map(m => {
-        const t1 = m?.teams?.[0]
-        const t2 = m?.teams?.[1]
-        return {
-          id: m?.objectId || m?.id || '',
-          name: `${t1?.team?.name || 'TBD'} vs ${t2?.team?.name || 'TBD'}`,
-          date: m?.startDate || '',
-          competitions: [{
-            status: {
-              type: {
-                name: m?.isLive ? 'STATUS_IN_PROGRESS'
-                  : m?.isComplete ? 'STATUS_FINAL'
-                  : 'STATUS_SCHEDULED',
-                detail: m?.statusText || '',
-              },
-            },
-            venue: { fullName: m?.ground?.name || '' },
-            competitors: [
-              {
-                homeAway: 'home',
-                winner: m?.winnerTeamId === t1?.team?.objectId,
-                score: t1?.innings?.[0]?.runs !== undefined
-                  ? `${t1.innings[0].runs}/${t1.innings[0].wickets ?? 0}`
-                  : '',
-                team: {
-                  displayName: t1?.team?.name || 'TBD',
-                  abbreviation: t1?.team?.abbreviation || t1?.team?.name?.substring(0,3).toUpperCase() || 'TBD',
-                  logo: t1?.team?.imageUrl || '',
-                  color: '1a6b3c',
-                },
-              },
-              {
-                homeAway: 'away',
-                winner: m?.winnerTeamId === t2?.team?.objectId,
-                score: t2?.innings?.[0]?.runs !== undefined
-                  ? `${t2.innings[0].runs}/${t2.innings[0].wickets ?? 0}`
-                  : '',
-                team: {
-                  displayName: t2?.team?.name || 'TBD',
-                  abbreviation: t2?.team?.abbreviation || t2?.team?.name?.substring(0,3).toUpperCase() || 'TBD',
-                  logo: t2?.team?.imageUrl || '',
-                  color: '555555',
-                },
-              },
-            ],
-          }],
+      const events = data?.events || []
+
+      // Fallback: if no matches in primary league, try international formats
+      if (events.length === 0) {
+        for (const fallback of CRICKET_FALLBACK) {
+          if (fallback === sport) continue
+          try {
+            const fb   = await fetch(`${ESPN}/${fallback}/scoreboard`, { next: { revalidate: 30 } })
+            const fbData = await fb.json()
+            const fbEvents = fbData?.events || []
+            if (fbEvents.length > 0) return Response.json(fbEvents.slice(0, 10))
+          } catch { continue }
         }
-      }).slice(0, 10)
-      return Response.json(matches)
+      }
+
+      return Response.json(events.slice(0, 10))
     } catch (e) {
       return Response.json([])
     }
   }
 
+  // ── Football ──────────────────────────────────────────────────────────────
   try {
-    const res = await fetch(`${ESPN}/${sport}/scoreboard`, { next: { revalidate: 30 } })
+    const res  = await fetch(`${ESPN}/${sport}/scoreboard`, { next: { revalidate: 30 } })
     const data = await res.json()
     return Response.json(data.events || [])
   } catch (e) {
