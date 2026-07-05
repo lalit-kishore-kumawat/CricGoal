@@ -1,62 +1,40 @@
-const ESPN = 'https://espn.com'
-const CRICINFO_SCORES = 'https://espncricinfo.com'
+const ESPN = 'https://site.api.espn.com/apis/site/v2/sports'
+const CRICINFO_NEWS = 'https://hs-consumer-api.espncricinfo.com/v1/pages/home/feed?lang=en'
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const sport = searchParams.get('sport') || 'soccer/eng.1'
 
-  // 🏏 1. Handle Live Cricket Scores from Cricinfo
+  // 🏏 Cricket news from ESPNcricinfo
   if (sport.startsWith('cricket')) {
     try {
-      const res = await fetch(CRICINFO_SCORES, { next: { revalidate: 60 } })
+      const res = await fetch(CRICINFO_NEWS, { next: { revalidate: 300 } })
       const data = await res.json()
-      
-      // Map Cricinfo data structures to match your existing ScoreBar.jsx frontend layout
-      const cricketMatches = (data?.content?.matches || []).map(m => {
-        const team1Obj = m?.teams?.[0]
-        const team2Obj = m?.teams?.[1]
-        
-        return {
-          id: m?.id || '',
-          status: m?.status || 'UPCOMING',
-          statusText: m?.statusText || '',
-          competitors: [
-            {
-              id: team1Obj?.team?.id || '1',
-              homeAway: 'home',
-              team: {
-                displayName: team1Obj?.team?.name || 'TBD',
-                abbreviation: team1Obj?.team?.abbreviation || team1Obj?.team?.name?.substring(0, 3).toUpperCase() || 'TBD',
-                logo: team1Obj?.team?.logo || ''
-              },
-              score: team1Obj?.score || ''
-            },
-            {
-              id: team2Obj?.team?.id || '2',
-              homeAway: 'away',
-              team: {
-                displayName: team2Obj?.team?.name || 'TBD',
-                abbreviation: team2Obj?.team?.abbreviation || team2Obj?.team?.name?.substring(0, 3).toUpperCase() || 'TBD',
-                logo: team2Obj?.team?.logo || ''
-              },
-              score: team2Obj?.score || ''
-            }
-          ]
-        }
-      }).slice(0, 10)
-
-      return Response.json({ events: cricketMatches })
+      const stories = data?.content?.stories || data?.stories || []
+      const articles = stories.slice(0, 8).map(s => ({
+        headline: s?.headline || s?.title || '',
+        description: s?.description || s?.summary || '',
+        published: s?.publishedAt || s?.publishAt || '',
+        images: s?.image?.url
+          ? [{ url: s.image.url }]
+          : s?.imageUrl
+          ? [{ url: s.imageUrl }]
+          : [],
+        links: { web: { href: s?.link || s?.url || '#' } },
+        categories: [{ description: 'Cricket' }],
+      }))
+      return Response.json(articles)
     } catch (e) {
-      return Response.json({ events: [] })
+      return Response.json([])
     }
   }
 
-  // ⚽ 2. Handle Football Scores from standard ESPN
+  // ⚽ Football news from ESPN
   try {
-    const res = await fetch(`${ESPN}/${sport}/scoreboard`, { next: { revalidate: 60 } })
+    const res = await fetch(`${ESPN}/${sport}/news`, { next: { revalidate: 300 } })
     const data = await res.json()
-    return Response.json(data)
+    return Response.json(data.articles?.slice(0, 8) || [])
   } catch (e) {
-    return Response.json({ events: [] })
+    return Response.json([])
   }
 }
