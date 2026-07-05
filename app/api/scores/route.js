@@ -1,13 +1,20 @@
 const ESPN = 'https://site.api.espn.com/apis/site/v2/sports'
 const CRICINFO = 'https://hs-consumer-api.espncricinfo.com/v1/pages/matches/current'
 
+const CRICINFO_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Referer': 'https://www.espncricinfo.com/',
+  'Origin': 'https://www.espncricinfo.com',
+  'Accept': 'application/json',
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const sport = searchParams.get('sport') || 'soccer/eng.1'
 
   if (sport.startsWith('cricket')) {
     try {
-      const res = await fetch(CRICINFO, { next: { revalidate: 60 } })
+      const res = await fetch(CRICINFO, { headers: CRICINFO_HEADERS, next: { revalidate: 60 } })
       const data = await res.json()
       const matches = (data?.content?.matches || []).map(m => {
         const t1 = m?.teams?.[0]

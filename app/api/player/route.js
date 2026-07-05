@@ -1,6 +1,13 @@
 const ESPN = 'https://site.api.espn.com/apis/site/v2/sports'
 const CRICINFO_PLAYER = 'https://hs-consumer-api.espncricinfo.com/v1/pages/player/home?playerId='
 
+const CRICINFO_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Referer': 'https://www.espncricinfo.com/',
+  'Origin': 'https://www.espncricinfo.com',
+  'Accept': 'application/json',
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
@@ -11,7 +18,7 @@ export async function GET(request) {
   // 🏏 Cricket player — ESPNcricinfo
   if (sport.startsWith('cricket')) {
     try {
-      const res = await fetch(CRICINFO_PLAYER + id, { next: { revalidate: 3600 } })
+      const res = await fetch(CRICINFO_PLAYER + id, { headers: CRICINFO_HEADERS, next: { revalidate: 3600 } })
       const data = await res.json()
       const p = data?.content?.player || {}
       const stats = data?.content?.stats || []

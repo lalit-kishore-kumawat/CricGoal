@@ -1,6 +1,13 @@
 const ESPN_SEARCH = 'https://site.api.espn.com/apis/common/v3/search'
 const CRICINFO_SEARCH = 'https://hs-consumer-api.espncricinfo.com/v1/pages/search?query='
 
+const CRICINFO_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Referer': 'https://www.espncricinfo.com/',
+  'Origin': 'https://www.espncricinfo.com',
+  'Accept': 'application/json',
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const query = searchParams.get('q') || ''
@@ -13,7 +20,7 @@ export async function GET(request) {
     try {
       const res = await fetch(
         CRICINFO_SEARCH + encodeURIComponent(query),
-        { next: { revalidate: 60 } }
+        { headers: CRICINFO_HEADERS, next: { revalidate: 60 } }
       )
       const data = await res.json()
       const items = data?.content?.results || data?.results || []
