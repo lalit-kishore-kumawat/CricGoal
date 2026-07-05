@@ -11,7 +11,7 @@ const SPORT_TABS = [
 const CRICKET_LEAGUES = ['IPL', 'ICC', 'Test', 'ODI', 'T20I']
 const FOOTBALL_LEAGUES = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'MLS']
 
-function SearchBar({ onClose }) {
+function SearchBar({ onClose, activeSport }) {
   const router = useRouter()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
@@ -33,7 +33,7 @@ function SearchBar({ onClose }) {
     clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => {
       setLoading(true)
-      fetch('/api/search?q=' + encodeURIComponent(query))
+      fetch('/api/search?q=' + encodeURIComponent(query) + '&sport=' + (activeSport === 'cricket' ? 'cricket' : 'soccer'))
         .then(r => r.json())
         .then(d => {
           setResults(d?.results || [])
@@ -149,7 +149,7 @@ export default function TopBar({ activeSport, activeLeague, onSportChange, onLea
       </nav>
 
       {searchOpen && (
-        <SearchBar onClose={() => setSearchOpen(false)} />
+        <SearchBar onClose={() => setSearchOpen(false)} activeSport={activeSport} />
       )}
 
       {/* Sport toggle */}
