@@ -9,7 +9,7 @@ const SPORT_TABS = [
   { label: '⚽ Football', key: 'football' },
 ]
 const CRICKET_LEAGUES = ['IPL', 'ICC', 'Test', 'ODI', 'T20I']
-const FOOTBALL_LEAGUES = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'MLS', 'FIFA World Cup']
+const FOOTBALL_LEAGUES = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'MLS', 'FIFA World Cup'];
 
 function SearchBar({ onClose, activeSport }) {
   const router = useRouter()
