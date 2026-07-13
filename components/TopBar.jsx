@@ -47,8 +47,8 @@ function SearchBar({ onClose, activeSport }) {
 
   function handleSelect(result) {
     const sport = result.sport === 'cricket'
-  ? 'cricket/ipl'
-  : 'soccer/eng.1'
+      ? 'cricket/ipl'
+      : 'soccer/eng.1'
 
     if (result.type === 'athlete') {
       router.push('/player/' + result.id + '?sport=' + sport)
