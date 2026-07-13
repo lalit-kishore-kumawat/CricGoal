@@ -21,6 +21,7 @@ const SPORT_MAP = {
     'Serie A':        { scores: 'soccer/ita.1', news: 'soccer/ita.1' },
     'Bundesliga':     { scores: 'soccer/ger.1', news: 'soccer/ger.1' },
     'MLS':            { scores: 'soccer/usa.1', news: 'soccer/usa.1' },
+    'FIFA World Cup': { scores: 'soccer/fifa.world', news: 'soccer/fifa.world' },
   },
 }
 
