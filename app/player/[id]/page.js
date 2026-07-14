@@ -1,4 +1,5 @@
 'use client'
+import Breadcrumb from '@/components/Breadcrumb'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -142,13 +143,14 @@ export default function PlayerPage() {
   }, [id, sport])
 
   return (
-    <div className={styles.page}>
-      <div className={styles.backBar}>
-        <Link href="/" className={styles.backBtn}>
-          ← Back to CricGoal
-        </Link>
-        <span className={styles.breadcrumb}>Player Profile</span>
+       <div className={styles.backBar}>
+        <Breadcrumb items={[
+          { label: 'Home', href: '/' },
+          { label: sport?.startsWith('cricket') ? '🏏 Cricket' : '⚽ Football', href: '/' },
+          { label: athlete?.displayName || 'Player' }
+        ]} />
       </div>
+  
 
       {loading && (
         <div className={styles.loadingWrap}>
