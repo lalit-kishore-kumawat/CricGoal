@@ -1,7 +1,7 @@
 'use client'
 import Breadcrumb from '@/components/Breadcrumb'
 import { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import styles from './page.module.css'
 
@@ -113,6 +113,7 @@ function TabBar({ tabs, active, onChange }) {
 export default function PlayerPage() {
   const { id } = useParams()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const sport = searchParams.get('sport') || 'soccer/eng.1'
 
   const [athlete, setAthlete] = useState(null)
@@ -143,14 +144,15 @@ export default function PlayerPage() {
   }, [id, sport])
 
   return (
-       <div className={styles.backBar}>
-        <Breadcrumb items={[
-          { label: 'Home', href: '/' },
-          { label: sport?.startsWith('cricket') ? '🏏 Cricket' : '⚽ Football', href: '/' },
-          { label: athlete?.displayName || 'Player' }
-        ]} />
-      </div>
-  
+    <div className={styles.page}>
+      <button className={styles.backBtn} onClick={() => router.back()}>
+        ← Back
+      </button>
+      <Breadcrumb items={[
+        { label: 'Home', href: '/' },
+        { label: sport?.startsWith('cricket') ? '🏏 Cricket' : '⚽ Football', href: '/' },
+        { label: athlete?.displayName || 'Player' },
+      ]} />
 
       {loading && (
         <div className={styles.loadingWrap}>

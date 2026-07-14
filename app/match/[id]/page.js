@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Breadcrumb from '@/components/Breadcrumb'
 import styles from './page.module.css'
 
 
@@ -343,6 +344,7 @@ function NewsAside({ data }) {
 export default function MatchPage() {
   const { id } = useParams()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const sport = searchParams.get('sport') || 'soccer/eng.1'
   const isCricket = sport.startsWith('cricket')
 
@@ -376,12 +378,15 @@ export default function MatchPage() {
   return (
     <div className={styles.page}>
       <div className={styles.backBar}>
-        <Link href="/" className={styles.backBtn}>
-          ← Back to CricGoal
-        </Link>
-        <span className={styles.breadcrumb}>
-          {isCricket ? '🏏 Cricket' : '⚽ Football'} · Match Detail
-        </span>
+        <button className={styles.backBtn} onClick={() => router.back()}>
+          ← Back
+        </button>
+        <Breadcrumb items={[
+          { label: 'Home', href: '/' },
+          { label: isCricket ? '🏏 Cricket' : '⚽ Football', href: '/' },
+          { label: data?.header?.competitions?.[0]?.competitors
+              ?.map(c => c?.team?.abbreviation).join(' vs ') || 'Match' },
+        ]} />
       </div>
 
       {loading && (

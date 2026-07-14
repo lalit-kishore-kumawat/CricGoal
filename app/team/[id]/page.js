@@ -1,7 +1,7 @@
 'use client'
 import Breadcrumb from '@/components/Breadcrumb'
 import { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import styles from './page.module.css'
 
@@ -139,6 +139,7 @@ function Stats({ team }) {
 export default function TeamPage() {
   const { id } = useParams()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const sport = searchParams.get('sport') || 'soccer/eng.1'
 
   const [team, setTeam] = useState(null)
@@ -170,11 +171,14 @@ export default function TeamPage() {
 
   return (
     <div className={styles.page}>
+      <button className={styles.backBtn} onClick={() => router.back()}>
+        ← Back
+      </button>
       <Breadcrumb items={[
-  { label: 'Home', href: '/' },
-  { label: sport?.startsWith('cricket') ? '🏏 Cricket' : '⚽ Football', href: '/' },
-  { label: team?.displayName || 'Team' },
-]} />
+        { label: 'Home', href: '/' },
+        { label: sport?.startsWith('cricket') ? '🏏 Cricket' : '⚽ Football', href: '/' },
+        { label: team?.displayName || 'Team' },
+      ]} />
 
       {loading && (
         <div className={styles.loadingWrap}>
