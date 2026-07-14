@@ -1,0 +1,39 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 10px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--espn-border);
+  font-size: 12px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.link {
+  color: var(--brand-green);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+.link:hover { opacity: 0.75; }
+
+.sep {
+  color: var(--text-muted);
+  margin: 0 4px;
+  font-size: 13px;
+}
+
+.current {
+  color: var(--text-muted);
+  font-weight: 400;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
