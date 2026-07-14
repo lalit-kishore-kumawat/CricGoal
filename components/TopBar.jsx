@@ -1,6 +1,9 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
+import AuthModal from '@/components/AuthModal'
 import styles from './TopBar.module.css'
 
 const NAV_ITEMS = ['Home', 'Scores', 'News', 'Standings']
@@ -116,6 +119,13 @@ function SearchBar({ onClose, activeSport, activeLeague }) {
 export default function TopBar({ activeSport, activeLeague, onSportChange, onLeagueChange }) {
   const [activeNav, setActiveNav] = useState('Home')
   const [searchOpen, setSearchOpen] = useState(false)
+  const [user, setUser] = useState(null)
+  const [showAuth, setShowAuth] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data?.user || null))
+    supabase.auth.onAuthStateChange((_, session) => setUser(session?.user || null))
+  }, [])
 
   const leagues = activeSport === 'cricket' ? CRICKET_LEAGUES : FOOTBALL_LEAGUES
 
@@ -149,11 +159,18 @@ export default function TopBar({ activeSport, activeLeague, onSportChange, onLea
               </svg>
             </button>
           )}
-          <button className={styles.avatar} aria-label="Profile">
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-            </svg>
-          </button>
+          {user ? (
+            <Link href="/profile" className={styles.avatar} title={user.email}>
+              {user.email?.[0].toUpperCase()}
+            </Link>
+          ) : (
+            <button className={styles.avatar} onClick={() => setShowAuth(true)}>
+              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </button>
+          )}
+          {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
         </div>
       </nav>
 
