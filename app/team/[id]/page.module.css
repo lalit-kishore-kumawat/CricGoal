@@ -108,3 +108,14 @@
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .error { color: #e53e3e; text-align: center; padding: 40px; font-size: 14px; }
+
+.favBtn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 8px; padding: 8px 14px;
+  font-size: 20px; cursor: pointer;
+  transition: all 0.15s; flex-shrink: 0;
+}
+.favBtn:hover { background: rgba(255,255,255,0.25); }
+.favBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+.favActive { background: rgba(255,215,0,0.2); border-color: gold; }

@@ -3,24 +3,24 @@ import Breadcrumb from '@/components/Breadcrumb'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useFavouritePlayer } from '@/lib/useFavourites'
+import AuthModal from '@/components/AuthModal'
 import styles from './page.module.css'
 
 function Empty({ msg }) {
   return <div className={styles.empty}>{msg}</div>
 }
 
-function PlayerHeader({ athlete }) {
+function PlayerHeader({ athlete, isFav, onFavToggle, favLoading }) {
   return (
     <div className={styles.header}>
       <div className={styles.headerInner}>
         {athlete?.headshot?.href ? (
           <img src={athlete.headshot.href} alt={athlete.displayName} className={styles.playerImg} />
         ) : (
-          <div className={styles.imgBox}>
-            {athlete?.jersey || '#'}
-          </div>
+          <div className={styles.imgBox}>{athlete?.jersey || '#'}</div>
         )}
-        <div>
+        <div style={{ flex: 1 }}>
           <div className={styles.playerName}>{athlete?.displayName || 'Player'}</div>
           <div className={styles.playerMeta}>
             {athlete?.position?.displayName && <span>{athlete.position.displayName}</span>}
@@ -28,6 +28,14 @@ function PlayerHeader({ athlete }) {
             {athlete?.team?.displayName && <span> · {athlete.team.displayName}</span>}
           </div>
         </div>
+        <button
+          className={`${styles.favBtn} ${isFav ? styles.favActive : ''}`}
+          onClick={onFavToggle}
+          disabled={favLoading}
+          title={isFav ? 'Remove from favourites' : 'Add to favourites'}
+        >
+          {isFav ? '⭐' : '☆'}
+        </button>
       </div>
     </div>
   )
@@ -116,6 +124,9 @@ export default function PlayerPage() {
   const router = useRouter()
   const sport = searchParams.get('sport') || 'soccer/eng.1'
 
+  const { isFav, toggle, loading: favLoading } = useFavouritePlayer(id)
+  const [showAuth, setShowAuth] = useState(false)
+
   const [athlete, setAthlete] = useState(null)
   const [stats, setStats] = useState(null)
   const [tab, setTab] = useState('Bio')
@@ -123,6 +134,15 @@ export default function PlayerPage() {
   const [error, setError] = useState('')
 
   const tabs = ['Bio', 'Stats']
+
+  async function handleFavToggle() {
+    const result = await toggle({
+      name: athlete?.displayName,
+      img: athlete?.headshot?.href || '',
+      sport: sport,
+    })
+    if (result?.needsAuth) setShowAuth(true)
+  }
 
   useEffect(() => {
     setLoading(true)
@@ -165,7 +185,13 @@ export default function PlayerPage() {
 
       {!loading && !error && athlete && (
         <>
-          <PlayerHeader athlete={athlete} />
+          <PlayerHeader
+            athlete={athlete}
+            isFav={isFav}
+            onFavToggle={handleFavToggle}
+            favLoading={favLoading}
+          />
+          {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
           <div className={styles.body}>
             <TabBar tabs={tabs} active={tab} onChange={setTab} />
             <div className={styles.tabContent}>

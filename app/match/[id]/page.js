@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Breadcrumb from '@/components/Breadcrumb'
+import { useMatchAlert } from '@/lib/useFavourites'
+import AuthModal from '@/components/AuthModal'
 import styles from './page.module.css'
 
 
@@ -348,6 +350,9 @@ export default function MatchPage() {
   const sport = searchParams.get('sport') || 'soccer/eng.1'
   const isCricket = sport.startsWith('cricket')
 
+  const { hasAlert, toggle: toggleAlert, loading: alertLoading } = useMatchAlert(id)
+  const [showAuth, setShowAuth] = useState(false)
+
   const [data, setData] = useState(null)
   const [tab, setTab] = useState(isCricket ? 'Scorecard' : 'Stats')
   const [loading, setLoading] = useState(true)
@@ -356,6 +361,17 @@ export default function MatchPage() {
   const tabs = isCricket
     ? ['Scorecard', 'Play-by-Play', 'Info']
     : ['Stats', 'Lineups', 'Play-by-Play', 'Info']
+
+  async function handleAlertToggle() {
+    const comp = data?.header?.competitions?.[0]
+    const result = await toggleAlert({
+      name: data?.header?.competitions?.[0]?.competitors
+        ?.map(c => c?.team?.abbreviation).join(' vs ') || 'Match',
+      sport: sport,
+      date: comp?.date || '',
+    })
+    if (result?.needsAuth) setShowAuth(true)
+  }
 
   useEffect(() => {
     setLoading(true)
@@ -401,6 +417,16 @@ export default function MatchPage() {
       {!loading && !error && data && (
         <>
           <MatchHeader data={data} />
+          <div className={styles.alertBar}>
+            <button
+              className={`${styles.alertBtn} ${hasAlert ? styles.alertActive : ''}`}
+              onClick={handleAlertToggle}
+              disabled={alertLoading}
+            >
+              {hasAlert ? '🔔 Alert set' : '🔕 Set alert'}
+            </button>
+          </div>
+          {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
           <div className={styles.body}>
             <div className={styles.main}>
               <TabBar tabs={tabs} active={tab} onChange={setTab} />
