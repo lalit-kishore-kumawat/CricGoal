@@ -1,0 +1,106 @@
+.page { min-height: 100vh; background: var(--bg); }
+
+.header {
+  background: linear-gradient(135deg, var(--brand-green-dark), var(--brand-green));
+  padding: 24px 20px;
+}
+.headerInner {
+  max-width: 600px; margin: 0 auto;
+  display: flex; align-items: center; gap: 14px;
+}
+.avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.userName { font-size: 15px; font-weight: 600; color: #fff; }
+.userMeta { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+.signOutBtn {
+  margin-left: auto; background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3); color: #fff;
+  font-size: 12px; font-weight: 500; padding: 6px 14px;
+  border-radius: 6px; cursor: pointer; transition: background 0.15s;
+}
+.signOutBtn:hover { background: rgba(255,255,255,0.25); }
+
+.statsRow {
+  display: flex; justify-content: center; gap: 0;
+  background: var(--surface); border-bottom: 1px solid var(--espn-border);
+  max-width: 600px; margin: 0 auto;
+}
+.statBox {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; padding: 14px 0;
+  border-right: 1px solid var(--espn-border);
+}
+.statBox:last-child { border-right: none; }
+.statNum { font-size: 22px; font-weight: 800; color: var(--brand-green); }
+.statLabel { font-size: 11px; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; }
+
+.body { max-width: 600px; margin: 20px auto; padding: 0 16px; }
+
+.tabBar {
+  display: flex; border-bottom: 2px solid var(--espn-border); margin-bottom: 16px;
+}
+.tab {
+  background: none; border: none; color: var(--text-muted);
+  font-size: 13px; font-weight: 600; padding: 10px 18px;
+  cursor: pointer; border-bottom: 2px solid transparent;
+  margin-bottom: -2px; transition: all 0.15s;
+}
+.tab:hover { color: var(--text-primary); }
+.tabActive { color: var(--brand-green) !important; border-bottom-color: var(--brand-green) !important; }
+
+.tabContent {
+  background: var(--surface); border-radius: 10px;
+  border: 1px solid var(--espn-border); overflow: hidden;
+}
+
+.favRow {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-bottom: 1px solid var(--espn-border);
+  text-decoration: none; transition: background 0.15s;
+}
+.favRow:last-child { border-bottom: none; }
+.favRow:hover { background: var(--bg); }
+
+.favLogo { width: 36px; height: 36px; object-fit: contain; border-radius: 50%; }
+.favLogoPlaceholder {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--bg); display: flex; align-items: center;
+  justify-content: center; font-size: 18px; flex-shrink: 0;
+}
+.favInfo { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.favName { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.favMeta { font-size: 11px; color: var(--text-muted); text-transform: capitalize; }
+.favArrow { color: var(--text-muted); font-size: 18px; }
+
+.empty { padding: 30px; text-align: center; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+
+.loadingWrap {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 14px; padding: 60px 20px;
+  color: var(--text-muted); font-size: 14px; min-height: 100vh;
+}
+.spinner {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid var(--espn-border); border-top-color: var(--brand-green);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.notSignedIn {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; background: var(--bg); padding: 20px;
+}
+.notSignedInInner { text-align: center; max-width: 320px; }
+.icon { font-size: 48px; display: block; margin-bottom: 16px; }
+.notSignedInInner h2 { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+.notSignedInInner p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+.homeBtn {
+  display: inline-block; background: var(--brand-green); color: #fff;
+  padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  text-decoration: none; transition: opacity 0.15s;
+}
+.homeBtn:hover { opacity: 0.85; }
