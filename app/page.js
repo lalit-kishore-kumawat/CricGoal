@@ -27,14 +27,14 @@ const SPORT_MAP = {
 
 export default function Home() {
   const [activeSport, setActiveSport] = useState('cricket')
-  const [activeLeague, setActiveLeague] = useState('IPL')
+  const [activeLeague, setActiveLeague] = useState('T20I')
   const [games, setGames] = useState([])
   const [articles, setArticles] = useState([])
   const [standings, setStandings] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const defaultLeague = activeSport === 'cricket' ? 'IPL' : 'Premier League'
+    const defaultLeague = activeSport === 'cricket' ? 'T20I' : 'Premier League'
     setActiveLeague(defaultLeague)
   }, [activeSport])
 
@@ -74,7 +74,7 @@ export default function Home() {
             <NewsFeed articles={articles} sport={activeSport} league={activeLeague} />
           )}
         </div>
-        <Sidebar standings={standings} sport={activeSport} league={activeLeague} />
+        <Sidebar standings={standings} sport={SPORT_MAP[activeSport]?.[activeLeague]?.scores} league={activeLeague} />
       </main>
     </div>
   )

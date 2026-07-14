@@ -11,7 +11,7 @@ const SPORT_TABS = [
 const CRICKET_LEAGUES = ['IPL', 'ICC', 'Test', 'ODI', 'T20I']
 const FOOTBALL_LEAGUES = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'MLS', 'FIFA World Cup'];
 
-function SearchBar({ onClose, activeSport }) {
+function SearchBar({ onClose, activeSport, activeLeague }) {
   const router = useRouter()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
@@ -47,8 +47,17 @@ function SearchBar({ onClose, activeSport }) {
 
   function handleSelect(result) {
     const sport = result.sport === 'cricket'
-      ? 'cricket/ipl'
-      : 'soccer/eng.1'
+      ? (activeLeague === 'IPL'  ? 'cricket/ipl'
+        : activeLeague === 'ICC'  ? 'cricket/icc-cricket-world-cup'
+        : activeLeague === 'Test' ? 'cricket/international-test'
+        : activeLeague === 'ODI'  ? 'cricket/international-odi'
+        : 'cricket/international-t20')
+      : (activeLeague === 'La Liga'        ? 'soccer/esp.1'
+        : activeLeague === 'Serie A'       ? 'soccer/ita.1'
+        : activeLeague === 'Bundesliga'    ? 'soccer/ger.1'
+        : activeLeague === 'MLS'           ? 'soccer/usa.1'
+        : activeLeague === 'FIFA World Cup' ? 'soccer/fifa.world'
+        : 'soccer/eng.1')
 
     if (result.type === 'athlete') {
       router.push('/player/' + result.id + '?sport=' + sport)
@@ -149,7 +158,7 @@ export default function TopBar({ activeSport, activeLeague, onSportChange, onLea
       </nav>
 
       {searchOpen && (
-        <SearchBar onClose={() => setSearchOpen(false)} activeSport={activeSport} />
+      <SearchBar onClose={() => setSearchOpen(false)} activeSport={activeSport} activeLeague={activeLeague} />
       )}
 
       {/* Sport toggle */}
