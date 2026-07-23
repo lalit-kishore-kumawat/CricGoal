@@ -343,6 +343,15 @@ function NewsAside({ data }) {
   )
 }
 
+export async function generateMetadata({ searchParams }) {
+  const sport = searchParams?.sport || 'soccer/eng.1'
+  const isCricket = sport.startsWith('cricket')
+  return {
+    title: `Live Match | CricGoal`,
+    description: `Live ${isCricket ? 'cricket' : 'football'} match scores and stats on CricGoal.`,
+  }
+}
+
 export default function MatchPage() {
   const { id } = useParams()
   const searchParams = useSearchParams()

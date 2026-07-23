@@ -146,6 +146,13 @@ function Stats({ team }) {
   )
 }
 
+export async function generateMetadata() {
+  return {
+    title: `Team Profile | CricGoal`,
+    description: `Team roster, schedule and stats on CricGoal.`,
+  }
+}
+
 export default function TeamPage() {
   const { id } = useParams()
   const searchParams = useSearchParams()

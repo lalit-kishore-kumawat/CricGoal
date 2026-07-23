@@ -118,6 +118,13 @@ function TabBar({ tabs, active, onChange }) {
   )
 }
 
+export async function generateMetadata() {
+  return {
+    title: `Player Profile | CricGoal`,
+    description: `Player career stats and bio on CricGoal.`,
+  }
+}
+
 export default function PlayerPage() {
   const { id } = useParams()
   const searchParams = useSearchParams()
