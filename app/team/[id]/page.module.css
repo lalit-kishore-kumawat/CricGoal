@@ -118,4 +118,24 @@
 }
 .favBtn:hover { background: rgba(255,255,255,0.25); }
 .favBtn:disabled { opacity: 0.6; cursor: not-allowed; }
-.favActive { background: rgba(255,215,0,0.2); border-color: gold; }
+.favActive { background: rgba(255,215,0,0.2); border-color: gold; }
+/* ── MOBILE ─────────────────────────────────────── */
+@media (max-width: 480px) {
+  .header { padding: 18px 12px; }
+  .headerInner { gap: 12px; }
+  .teamLogo { width: 52px; height: 52px; }
+  .logoBox { width: 52px; height: 52px; font-size: 20px; }
+  .teamName { font-size: 18px; }
+  .teamMeta { font-size: 12px; }
+  .body { padding: 0 10px; margin: 12px auto; }
+  .tabContent { padding: 12px 10px; }
+  .tab { padding: 8px 12px; font-size: 12px; }
+  .rosterGrid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
+  .playerImg { width: 48px; height: 48px; }
+  .playerImgPlaceholder { width: 48px; height: 48px; }
+  .playerCardName { font-size: 11px; }
+  .scheduleRow { grid-template-columns: 70px 1fr 80px; font-size: 12px; }
+  .statsGrid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+  .backBar { padding: 8px 12px; }
+  .favBtn { padding: 6px 10px; font-size: 18px; }
+}

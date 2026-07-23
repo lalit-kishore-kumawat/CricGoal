@@ -31,3 +31,8 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }
+
+/* ── MOBILE ─────────────────────────────────────── */
+@media (max-width: 480px) {
+  .main { padding: 12px 10px; gap: 14px; }
+}

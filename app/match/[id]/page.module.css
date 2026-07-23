@@ -141,4 +141,25 @@
   background: rgba(26,107,60,0.1);
   border-color: var(--brand-green);
   color: var(--brand-green);
-}
+}
+/* ── MOBILE ─────────────────────────────────────── */
+@media (max-width: 480px) {
+  .header { padding: 20px 12px; }
+  .headerInner { gap: 8px; }
+  .teamLogo { width: 44px; height: 44px; }
+  .logoBox { width: 44px; height: 44px; font-size: 16px; }
+  .teamScore { font-size: 28px; }
+  .teamName { font-size: 11px; }
+  .centre { gap: 4px; }
+  .body { padding: 0 10px; margin: 12px auto; gap: 12px; }
+  .tabContent { padding: 12px 10px; }
+  .tab { padding: 8px 12px; font-size: 12px; }
+  .statsTeamRow { grid-template-columns: 1fr repeat(2, 50px); }
+  .statRow { grid-template-columns: 1fr repeat(2, 50px); }
+  .lineupWrap { grid-template-columns: 1fr; }
+  .scoreTable { font-size: 11px; }
+  .scoreTable th { padding: 3px 4px; }
+  .scoreTable td { padding: 5px 4px; }
+  .alertBar { padding: 8px 10px; }
+  .backBar { padding: 8px 12px; }
+}

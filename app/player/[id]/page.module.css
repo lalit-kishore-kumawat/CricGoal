@@ -99,4 +99,22 @@
 }
 .favBtn:hover { background: rgba(255,255,255,0.25); }
 .favBtn:disabled { opacity: 0.6; cursor: not-allowed; }
-.favActive { background: rgba(255,215,0,0.2); border-color: gold; }
+.favActive { background: rgba(255,215,0,0.2); border-color: gold; }
+/* ── MOBILE ─────────────────────────────────────── */
+@media (max-width: 480px) {
+  .header { padding: 18px 12px; }
+  .headerInner { gap: 12px; }
+  .playerImg { width: 60px; height: 60px; }
+  .imgBox { width: 60px; height: 60px; font-size: 18px; }
+  .playerName { font-size: 18px; }
+  .playerMeta { font-size: 12px; }
+  .body { padding: 0 10px; margin: 12px auto; }
+  .tabContent { padding: 12px 10px; }
+  .tab { padding: 8px 12px; font-size: 12px; }
+  .infoRow { font-size: 12px; padding: 8px 0; }
+  .statsGrid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+  .statBox { padding: 10px 6px; }
+  .statValue { font-size: 16px; }
+  .backBar { padding: 8px 12px; }
+  .favBtn { padding: 6px 10px; font-size: 18px; }
+}

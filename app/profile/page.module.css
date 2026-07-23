@@ -104,3 +104,19 @@
   text-decoration: none; transition: opacity 0.15s;
 }
 .homeBtn:hover { opacity: 0.85; }
+
+/* ── MOBILE ─────────────────────────────────────── */
+@media (max-width: 480px) {
+  .header { padding: 16px 12px; }
+  .headerInner { gap: 10px; }
+  .avatar { width: 42px; height: 42px; font-size: 16px; }
+  .userName { font-size: 13px; }
+  .signOutBtn { font-size: 11px; padding: 5px 10px; }
+  .body { padding: 0 10px; margin: 12px auto; }
+  .tabContent { border-radius: 8px; }
+  .tab { padding: 8px 12px; font-size: 12px; }
+  .favRow { padding: 10px 12px; gap: 10px; }
+  .favLogo { width: 30px; height: 30px; }
+  .favLogoPlaceholder { width: 30px; height: 30px; font-size: 15px; }
+  .favName { font-size: 12px; }
+}

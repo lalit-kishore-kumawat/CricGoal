@@ -43,3 +43,13 @@
 }
 .clock, .time, .final { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
 .final { font-weight: 500; }
+
+/* ── MOBILE ─────────────────────────────────────── */
+@media (max-width: 480px) {
+  .bar { height: 54px; }
+  .card { padding: 0 10px; gap: 6px; }
+  .abbr { width: 24px; font-size: 11px; }
+  .score { width: 18px; font-size: 12px; }
+  .logo { width: 14px; height: 14px; }
+  .logoPlaceholder { width: 14px; height: 14px; font-size: 7px; }
+}

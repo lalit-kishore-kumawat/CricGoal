@@ -35,3 +35,14 @@ body {
 }
 
 a { text-decoration: none; color: inherit; }
+
+/* ── MOBILE GLOBALS ──────────────────────────────── */
+@media (max-width: 480px) {
+  body { font-size: 14px; }
+  button { -webkit-tap-highlight-color: transparent; }
+  input, button { touch-action: manipulation; }
+}
+
+/* Prevent text overflow on small screens */
+* { word-break: break-word; }
+img { max-width: 100%; }

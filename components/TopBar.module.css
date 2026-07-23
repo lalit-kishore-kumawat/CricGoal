@@ -139,3 +139,16 @@
 }
 .leagueTab:hover { color: #fff; background: rgba(255,255,255,0.1); }
 .leagueTab.leagueActive { color: #fff; background: var(--brand-green); }
+/* ── MOBILE ─────────────────────────────────────── */
+@media (max-width: 480px) {
+  .topbar { padding: 0 12px; gap: 8px; height: 48px; }
+  .logo { font-size: 18px; }
+  .logoTag { font-size: 13px; }
+  .navLinks { display: none; }
+  .sportBtn { padding: 5px 12px; font-size: 12px; }
+  .sportToggle { padding: 5px 12px; gap: 6px; }
+  .leagueTab { padding: 4px 10px; font-size: 11px; }
+  .searchBarInner { padding: 6px 10px; }
+  .searchInput { font-size: 13px; }
+  .dropdown { left: 12px; width: calc(100vw - 24px); }
+}

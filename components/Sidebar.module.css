@@ -66,3 +66,8 @@
 
 .trendNum { font-size: 11px; color: var(--text-muted); width: 14px; flex-shrink: 0; }
 .trendName { font-size: 13px; color: var(--text-primary); flex: 1; font-weight: 500; }
+
+/* ── MOBILE ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .card { padding: 10px 12px; margin-bottom: 10px; }
+}
