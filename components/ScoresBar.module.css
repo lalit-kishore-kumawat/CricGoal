@@ -3,7 +3,8 @@
   border-bottom: 1px solid var(--espn-border);
   display: flex;
   overflow-x: auto;
-  height: 60px;
+  height: auto;
+  min-height: 60px;
   align-items: stretch;
   scrollbar-width: none;
 }
@@ -14,42 +15,81 @@
   font-size: 13px; display: flex; align-items: center;
 }
 
+/* ── Football card ───────────────────────────── */
 .card {
   display: flex; align-items: center; gap: 10px;
-  padding: 0 16px; border-right: 1px solid var(--espn-border);
+  padding: 0 14px; border-right: 1px solid var(--espn-border);
   flex-shrink: 0; cursor: pointer; transition: background 0.15s;
+  text-decoration: none;
 }
 .card:hover { background: var(--bg); }
 
 .teams { display: flex; flex-direction: column; gap: 3px; }
 .teamRow { display: flex; align-items: center; gap: 6px; }
-
 .logo { width: 18px; height: 18px; object-fit: contain; }
 .logoPlaceholder {
   width: 18px; height: 18px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 8px; font-weight: 700; color: #fff; flex-shrink: 0;
 }
-
 .abbr { font-size: 12px; font-weight: 500; color: var(--text-secondary); width: 30px; }
 .score { font-size: 13px; font-weight: 600; color: var(--text-secondary); width: 22px; text-align: right; }
-.winner { color: var(--text-primary); }
+.winner { color: var(--text-primary) !important; }
 
 .meta { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+
+/* ── Cricket card ────────────────────────────── */
+.cricketCard {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-right: 1px solid var(--espn-border);
+  flex-shrink: 0; cursor: pointer; transition: background 0.15s;
+  text-decoration: none; min-width: 180px;
+}
+.cricketCard:hover { background: var(--bg); }
+
+.cricketTeams { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.cricketRow { display: flex; align-items: center; gap: 6px; }
+.cricketLogo { width: 18px; height: 18px; object-fit: contain; flex-shrink: 0; }
+.cricketLogoPH {
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.cricketAbbr {
+  font-size: 12px; font-weight: 600; color: var(--text-secondary);
+  width: 32px; flex-shrink: 0;
+}
+.cricketScore {
+  font-size: 12px; font-weight: 500; color: var(--text-secondary);
+  white-space: nowrap; flex: 1;
+}
+.cricketMeta {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 2px; flex-shrink: 0;
+}
+.cricketDetail {
+  font-size: 9px; color: var(--text-muted);
+  white-space: nowrap; max-width: 70px;
+  overflow: hidden; text-overflow: ellipsis; text-align: center;
+}
+
+/* ── Shared status badges ────────────────────── */
 .live {
   font-size: 9px; font-weight: 700; color: #fff;
   background: var(--brand-green); padding: 2px 5px;
-  border-radius: 3px; letter-spacing: 0.3px;
+  border-radius: 3px; letter-spacing: 0.3px; white-space: nowrap;
 }
-.clock, .time, .final { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+.clock, .time, .final {
+  font-size: 10px; color: var(--text-muted); white-space: nowrap;
+}
 .final { font-weight: 500; }
 
-/* ── MOBILE ─────────────────────────────────────── */
+/* ── Mobile ──────────────────────────────────── */
 @media (max-width: 480px) {
-  .bar { height: 54px; }
   .card { padding: 0 10px; gap: 6px; }
   .abbr { width: 24px; font-size: 11px; }
   .score { width: 18px; font-size: 12px; }
-  .logo { width: 14px; height: 14px; }
-  .logoPlaceholder { width: 14px; height: 14px; font-size: 7px; }
+  .cricketCard { min-width: 150px; padding: 6px 10px; gap: 6px; }
+  .cricketAbbr { width: 26px; font-size: 11px; }
+  .cricketScore { font-size: 11px; }
 }

@@ -1,26 +1,37 @@
-// ESPN's unified API — cricket and football both live here.
-// For cricket the sport param sent by page.js is always just 'cricket'
-// so the URL becomes: ESPN/cricket/news
 const ESPN = 'https://site.api.espn.com/apis/site/v2/sports'
+
+// Try multiple cricket news endpoints and return first that has articles
+async function getCricketNews() {
+  const endpoints = [
+    `${ESPN}/cricket/international-t20/news`,
+    `${ESPN}/cricket/ipl/news`,
+    `${ESPN}/cricket/international-test/news`,
+    `${ESPN}/cricket/international-odi/news`,
+    `${ESPN}/cricket/news`,
+  ]
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, { next: { revalidate: 300 } })
+      if (!res.ok) continue
+      const data = await res.json()
+      const articles = data?.articles?.slice(0, 8) || []
+      if (articles.length > 0) return articles
+    } catch { continue }
+  }
+  return []
+}
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const sport = searchParams.get('sport') || 'soccer/eng.1'
 
-  // ── Cricket ───────────────────────────────────────────────────────────────
   if (sport.startsWith('cricket')) {
-    try {
-      const res  = await fetch(`${ESPN}/cricket/news`, { next: { revalidate: 300 } })
-      const data = await res.json()
-      return Response.json(data.articles?.slice(0, 8) || [])
-    } catch (e) {
-      return Response.json([])
-    }
+    const articles = await getCricketNews()
+    return Response.json(articles)
   }
 
-  // ── Football ──────────────────────────────────────────────────────────────
   try {
-    const res  = await fetch(`${ESPN}/${sport}/news`, { next: { revalidate: 300 } })
+    const res = await fetch(`${ESPN}/${sport}/news`, { next: { revalidate: 300 } })
     const data = await res.json()
     return Response.json(data.articles?.slice(0, 8) || [])
   } catch (e) {

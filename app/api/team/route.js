@@ -1,6 +1,23 @@
-// ESPN's unified API — cricket and football team endpoints follow identical patterns.
-// cricket/ipl/teams/{id}  or  soccer/eng.1/teams/{id}
 const ESPN = 'https://site.api.espn.com/apis/site/v2/sports'
+
+async function getSchedule(sport, id) {
+  // Try current season first, then fall back to all seasons
+  const urls = [
+    `${ESPN}/${sport}/teams/${id}/schedule`,
+    `${ESPN}/${sport}/teams/${id}/schedule?season=2025`,
+    `${ESPN}/${sport}/teams/${id}/schedule?season=2024`,
+  ]
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { next: { revalidate: 1800 } })
+      if (!res.ok) continue
+      const data = await res.json()
+      const events = data?.events || data?.team?.events || []
+      if (events.length > 0) return events
+    } catch { continue }
+  }
+  return []
+}
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
@@ -10,17 +27,15 @@ export async function GET(request) {
   if (!id) return Response.json({ error: 'Missing team id' }, { status: 400 })
 
   try {
-    const [teamRes, scheduleRes, rosterRes] = await Promise.all([
-      fetch(`${ESPN}/${sport}/teams/${id}`,                  { next: { revalidate: 3600 } }),
-      fetch(`${ESPN}/${sport}/teams/${id}/schedule`,         { next: { revalidate: 1800 } }),
-      fetch(`${ESPN}/${sport}/teams/${id}?enable=roster`,    { next: { revalidate: 3600 } }),
+    const [teamRes, rosterRes] = await Promise.all([
+      fetch(`${ESPN}/${sport}/teams/${id}`,               { next: { revalidate: 3600 } }),
+      fetch(`${ESPN}/${sport}/teams/${id}?enable=roster`, { next: { revalidate: 3600 } }),
     ])
 
-    const teamData     = await teamRes.json()
-    const scheduleData = await scheduleRes.json().catch(() => ({}))
-    const rosterData   = await rosterRes.json().catch(() => ({}))
+    const teamData   = await teamRes.json()
+    const rosterData = await rosterRes.json().catch(() => ({}))
+    const schedule   = await getSchedule(sport, id)
 
-    // roster may come as grouped positions array or flat array
     const athletes =
       rosterData?.team?.athletes?.flatMap(g => g?.items || []) ||
       rosterData?.team?.athletes ||
@@ -28,7 +43,7 @@ export async function GET(request) {
 
     return Response.json({
       team:     { ...(teamData?.team || {}), athletes },
-      schedule: scheduleData?.events || scheduleData?.team?.events || [],
+      schedule,
     })
   } catch (e) {
     return Response.json({ error: 'Failed to fetch team' }, { status: 500 })
