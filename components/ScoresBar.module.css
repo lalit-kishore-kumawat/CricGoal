@@ -4,7 +4,7 @@
   display: flex;
   overflow-x: auto;
   height: auto;
-  min-height: 60px;
+  min-height: 68px;
   align-items: stretch;
   scrollbar-width: none;
 }
@@ -40,37 +40,47 @@
 
 /* ── Cricket card ────────────────────────────── */
 .cricketCard {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 12px; border-right: 1px solid var(--espn-border);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 6px 12px; border-right: 1px solid var(--espn-border);
   flex-shrink: 0; cursor: pointer; transition: background 0.15s;
-  text-decoration: none; min-width: 180px;
+  text-decoration: none; min-width: 200px; gap: 3px;
 }
 .cricketCard:hover { background: var(--bg); }
 
-.cricketTeams { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-.cricketRow { display: flex; align-items: center; gap: 6px; }
-.cricketLogo { width: 18px; height: 18px; object-fit: contain; flex-shrink: 0; }
+/* Each team row: logo | abbr | score | overs */
+.cricketTeams { display: flex; flex-direction: column; gap: 4px; }
+.cricketRow {
+  display: flex; align-items: center; gap: 5px;
+  white-space: nowrap;
+}
+.cricketLogo { width: 16px; height: 16px; object-fit: contain; flex-shrink: 0; }
 .cricketLogoPH {
-  width: 18px; height: 18px; border-radius: 50%;
+  width: 16px; height: 16px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 8px; font-weight: 700; color: #fff; flex-shrink: 0;
+  font-size: 7px; font-weight: 700; color: #fff; flex-shrink: 0;
 }
 .cricketAbbr {
-  font-size: 12px; font-weight: 600; color: var(--text-secondary);
-  width: 32px; flex-shrink: 0;
+  font-size: 11px; font-weight: 600; color: var(--text-secondary);
+  width: 30px; flex-shrink: 0;
 }
 .cricketScore {
-  font-size: 11px; font-weight: 500; color: var(--text-secondary);
-  white-space: nowrap; flex: 1; overflow: hidden; text-overflow: ellipsis;
+  font-size: 11px; font-weight: 600; color: var(--text-secondary);
+  white-space: nowrap; flex-shrink: 0;
 }
+.cricketOvers {
+  font-size: 10px; font-weight: 400; color: var(--text-muted);
+  white-space: nowrap; flex-shrink: 0;
+}
+
+/* Bottom meta row: LIVE badge + status detail side by side */
 .cricketMeta {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 2px; flex-shrink: 0;
+  display: flex; align-items: center; gap: 5px;
+  margin-top: 1px;
 }
 .cricketDetail {
   font-size: 9px; color: var(--text-muted);
-  white-space: nowrap; max-width: 55px;
-  overflow: hidden; text-overflow: ellipsis; text-align: center;
+  white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; max-width: 120px;
 }
 
 /* ── Shared status badges ────────────────────── */
@@ -89,7 +99,8 @@
   .card { padding: 0 10px; gap: 6px; }
   .abbr { width: 24px; font-size: 11px; }
   .score { width: 18px; font-size: 12px; }
-  .cricketCard { min-width: 150px; padding: 6px 10px; gap: 6px; }
-  .cricketAbbr { width: 26px; font-size: 11px; }
-  .cricketScore { font-size: 11px; }
+  .cricketCard { min-width: 170px; padding: 6px 10px; }
+  .cricketAbbr { width: 26px; font-size: 10px; }
+  .cricketScore { font-size: 10px; }
+  .cricketOvers { font-size: 9px; }
 }

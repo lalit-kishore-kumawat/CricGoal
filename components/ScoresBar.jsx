@@ -11,6 +11,16 @@ function CricketScoreCard({ game, sport }) {
   const isFinal = status?.name === 'STATUS_FINAL'
   const isScheduled = status?.name === 'STATUS_SCHEDULED'
 
+  // Split "152/3 (20.0 ov)" → score "152/3" and overs "(20.0 ov)"
+  function splitScore(raw = '') {
+    if (!raw) return { runs: '', overs: '' }
+    const match = raw.match(/^([^\s(]+)\s*(\(.*\))?(.*)$/)
+    return { runs: match?.[1] || raw, overs: match?.[2] || match?.[3] || '' }
+  }
+
+  const homeScore = splitScore(isScheduled ? '' : home?.score || '')
+  const awayScore = splitScore(isScheduled ? '' : away?.score || '')
+
   return (
     <Link href={`/match/${game.id}?sport=${sport}`} className={styles.cricketCard}>
       <div className={styles.cricketTeams}>
@@ -22,9 +32,14 @@ function CricketScoreCard({ game, sport }) {
           <span className={`${styles.cricketAbbr} ${home?.winner ? styles.winner : ''}`}>
             {home?.team?.abbreviation || 'TBD'}
           </span>
-          <span className={`${styles.cricketScore} ${home?.winner ? styles.winner : ''}`}>
-            {isScheduled ? '' : home?.score || ''}
-          </span>
+          {homeScore.runs && (
+            <span className={`${styles.cricketScore} ${home?.winner ? styles.winner : ''}`}>
+              {homeScore.runs}
+            </span>
+          )}
+          {homeScore.overs && (
+            <span className={styles.cricketOvers}>{homeScore.overs}</span>
+          )}
         </div>
         <div className={styles.cricketRow}>
           {away?.team?.logo
@@ -34,16 +49,23 @@ function CricketScoreCard({ game, sport }) {
           <span className={`${styles.cricketAbbr} ${away?.winner ? styles.winner : ''}`}>
             {away?.team?.abbreviation || 'TBD'}
           </span>
-          <span className={`${styles.cricketScore} ${away?.winner ? styles.winner : ''}`}>
-            {isScheduled ? '' : away?.score || ''}
-          </span>
+          {awayScore.runs && (
+            <span className={`${styles.cricketScore} ${away?.winner ? styles.winner : ''}`}>
+              {awayScore.runs}
+            </span>
+          )}
+          {awayScore.overs && (
+            <span className={styles.cricketOvers}>{awayScore.overs}</span>
+          )}
         </div>
       </div>
       <div className={styles.cricketMeta}>
-        {isLive && <span className={styles.live}>LIVE</span>}
-        {isFinal && <span className={styles.final}>FINAL</span>}
+        {isLive      && <span className={styles.live}>LIVE</span>}
+        {isFinal     && <span className={styles.final}>FINAL</span>}
         {isScheduled && <span className={styles.time}>{formatTimeEST(game.date)}</span>}
-        {isLive && <span className={styles.cricketDetail}>{status?.detail || ''}</span>}
+        {(isLive || isFinal) && status?.detail &&
+          <span className={styles.cricketDetail}>{status.detail}</span>
+        }
       </div>
     </Link>
   )
