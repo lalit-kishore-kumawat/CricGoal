@@ -1,31 +1,38 @@
-import Script from 'next/script'
+import { Inter } from 'next/font/google'
+import Script from 'next/script' // ✅ Fix 1: Mandatory import for Next.js scripts
 import './globals.css'
 
+const inter = Inter({ subsets: ['latin'] })
+
 export const metadata = {
-  title: 'CricGoal - Live Cricket & Football Scores, News & Updates',
-  description: 'Live cricket and football scores, match details, standings, player stats and news. Covering IPL, T20I, ODI, Test, Premier League, La Liga and more.',
-  keywords: 'cricket scores, football scores, IPL, T20I, Premier League, live scores, cricket news',
+  title: 'CricGoal — Live Football & Cricket Scores',
+  description: 'Get real-time live cricket and football scores, match updates, team lineups, player statistics, and trending sports news instantly on CricGoal.',
   metadataBase: new URL('https://cricgoal.info'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'CricGoal - Live Cricket & Football',
-    description: 'Live scores, news and stats for cricket and football.',
+    title: 'CricGoal — Live Football & Cricket Scores',
+    description: 'Track your favorite cricket and football teams with live match centers, dynamic team rosters, and real-time updates.',
     url: 'https://cricgoal.info',
     siteName: 'CricGoal',
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {
-    card: 'summary',
-    title: 'CricGoal - Live Cricket & Football',
-    description: 'Live scores, news and stats for cricket and football.',
+    card: 'summary_large_image',
+    title: 'CricGoal — Live Football & Cricket Scores',
+    description: 'Track your favorite sports match updates instantly.',
   },
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
+      {/* ✅ Fix 2: Using the optimized Next.js Script strategy */}
+      <head>
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-6EJH4HQKCX"
+          src="https://googletagmanager.com"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -36,8 +43,8 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-6EJH4HQKCX');
           `}
         </Script>
-        {children}
-      </body>
+      </head>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }
