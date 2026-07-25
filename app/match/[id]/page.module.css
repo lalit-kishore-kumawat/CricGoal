@@ -163,3 +163,27 @@
   .alertBar { padding: 8px 10px; }
   .backBar { padding: 8px 12px; }
 }
+
+/* ── New elements ──────────────────────────────── */
+.matchInfoGrid { display: flex; flex-direction: column; margin-bottom: 16px; }
+.tossInfo {
+  font-size: 13px; color: var(--text-secondary);
+  background: var(--bg); border-radius: 8px;
+  padding: 10px 14px; margin-bottom: 14px;
+  border: 1px solid var(--espn-border);
+}
+.upcomingMsg {
+  text-align: center; color: var(--text-muted);
+  font-size: 13px; padding: 20px 0; line-height: 1.6;
+}
+.backBar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 20px; background: var(--surface);
+  border-bottom: 1px solid var(--espn-border);
+}
+.backBtn {
+  background: none; border: none; color: var(--brand-green);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  padding: 0; transition: opacity 0.15s; flex-shrink: 0;
+}
+.backBtn:hover { opacity: 0.7; }
