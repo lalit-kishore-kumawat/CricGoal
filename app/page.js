@@ -33,10 +33,16 @@ export default function Home() {
   const [standings, setStandings] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const defaultLeague = activeSport === 'cricket' ? 'T20I' : 'Premier League'
+  // When sport tab changes, reset league and clear stale data immediately
+  function handleSportChange(sport) {
+    const defaultLeague = sport === 'cricket' ? 'T20I' : 'Premier League'
+    setActiveSport(sport)
     setActiveLeague(defaultLeague)
-  }, [activeSport])
+    setGames([])
+    setArticles([])
+    setStandings([])
+    setLoading(true)
+  }
 
   useEffect(() => {
     setLoading(true)
@@ -53,14 +59,15 @@ export default function Home() {
       setStandings(s || [])
       setLoading(false)
     })
-  }, [activeLeague])
+  }, [activeSport, activeLeague])
+
 
   return (
     <div className={styles.page}>
       <TopBar
         activeSport={activeSport}
         activeLeague={activeLeague}
-        onSportChange={setActiveSport}
+        onSportChange={handleSportChange}
         onLeagueChange={setActiveLeague}
       />
       <ScoresBar games={games} sport={SPORT_MAP[activeSport]?.[activeLeague]?.scores} />
