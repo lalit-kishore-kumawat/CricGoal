@@ -1,5 +1,5 @@
 import { Inter } from 'next/font/google'
-import Script from 'next/script' // ✅ Fix 1: Mandatory import for Next.js scripts
+import Script from 'next/script'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -29,10 +29,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/* ✅ Fix 2: Using the optimized Next.js Script strategy */}
-      <head>
+      <body className={inter.className}>
+        {/* Google Analytics - Place directly inside <body> or root level */}
         <Script
-          src="https://googletagmanager.com"
+          src="https://www.googletagmanager.com/gtag/js?id=G-6EJH4HQKCX"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -43,8 +43,9 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-6EJH4HQKCX');
           `}
         </Script>
-      </head>
-      <body className={inter.className}>{children}</body>
+
+        {children}
+      </body>
     </html>
   )
 }
