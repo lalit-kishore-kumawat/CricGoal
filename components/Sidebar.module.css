@@ -67,6 +67,18 @@
 .trendNum { font-size: 11px; color: var(--text-muted); width: 14px; flex-shrink: 0; }
 .trendName { font-size: 13px; color: var(--text-primary); flex: 1; font-weight: 500; }
 
+/* ── IPL TEAMS BUTTON ───────────────────────────── */
+.iplTeamsBtn {
+  display: block; text-align: center;
+  background: var(--brand-green); color: #fff;
+  font-size: 13px; font-weight: 600;
+  padding: 10px; border-radius: 8px;
+  text-decoration: none; margin-top: 4px;
+  transition: opacity 0.15s;
+  margin-bottom: 14px;
+}
+.iplTeamsBtn:hover { opacity: 0.85; }
+
 /* ── MOBILE ─────────────────────────────────────── */
 @media (max-width: 768px) {
   .card { padding: 10px 12px; margin-bottom: 10px; }

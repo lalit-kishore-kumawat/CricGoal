@@ -52,6 +52,13 @@ export default function Sidebar({ standings = [], sport, league }) {
         )}
       </div>
 
+      {/* IPL Teams Link */}
+      {sport?.startsWith('cricket') && (
+        <Link href="/cricket/teams" className={styles.iplTeamsBtn}>
+          🏏 View All IPL Teams →
+        </Link>
+      )}
+
       {/* Trending */}
       <div className={styles.card}>
         <h3 className={styles.cardTitle}>Trending in {sport === 'cricket' ? '🏏 Cricket' : '⚽ Football'}</h3>
