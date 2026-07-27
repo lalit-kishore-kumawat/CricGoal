@@ -3,144 +3,147 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import styles from './FeaturedMatch.module.css'
 
-// Countdown timer hook
 function useCountdown(targetDate) {
   const [timeLeft, setTimeLeft] = useState({ h: 0, m: 0, s: 0 })
-
   useEffect(() => {
     if (!targetDate) return
     function update() {
       const diff = new Date(targetDate) - new Date()
       if (diff <= 0) { setTimeLeft({ h: 0, m: 0, s: 0 }); return }
-      const h = Math.floor(diff / 3600000)
-      const m = Math.floor((diff % 3600000) / 60000)
-      const s = Math.floor((diff % 60000) / 1000)
-      setTimeLeft({ h, m, s })
+      setTimeLeft({
+        h: Math.floor(diff / 3600000),
+        m: Math.floor((diff % 3600000) / 60000),
+        s: Math.floor((diff % 60000) / 1000),
+      })
     }
     update()
-    const timer = setInterval(update, 1000)
-    return () => clearInterval(timer)
+    const t = setInterval(update, 1000)
+    return () => clearInterval(t)
   }, [targetDate])
-
   return timeLeft
 }
 
 function pad(n) { return String(n).padStart(2, '0') }
 
+// Safe color extractor — always returns valid hex
+function safeColor(colorStr, fallback) {
+  if (!colorStr || colorStr === 'undefined' || colorStr === 'null') return fallback
+  return colorStr.startsWith('#') ? colorStr : `#${colorStr}`
+}
+
 export default function FeaturedMatch({ games = [], sport = '' }) {
   const isCricket = sport.startsWith('cricket')
 
-  // Pick best match to feature:
-  // Priority: LIVE > most recent FINAL > first UPCOMING
-  const featured = games.find(g => {
-    const status = g?.competitions?.[0]?.status?.type?.name
-    return status === 'STATUS_IN_PROGRESS'
-  }) || games.find(g => {
-    const status = g?.competitions?.[0]?.status?.type?.name
-    return status === 'STATUS_FINAL'
-  }) || games[0]
+  if (!games || games.length === 0) return null
 
+  // Pick best match: LIVE > FINAL > UPCOMING
+  let featured = null
+  for (const g of games) {
+    const s = g?.competitions?.[0]?.status?.type?.name
+    if (s === 'STATUS_IN_PROGRESS') { featured = g; break }
+  }
+  if (!featured) {
+    for (const g of games) {
+      const s = g?.competitions?.[0]?.status?.type?.name
+      if (s === 'STATUS_FINAL') { featured = g; break }
+    }
+  }
+  if (!featured) featured = games[0]
   if (!featured) return null
 
   const comp        = featured?.competitions?.[0] || {}
-  const competitors = comp?.competitors || []
-  const home        = competitors.find(c => c.homeAway === 'home') || competitors[0] || {}
-  const away        = competitors.find(c => c.homeAway === 'away') || competitors[1] || {}
-  const statusName  = comp?.status?.type?.name || ''
+  const competitors = Array.isArray(comp?.competitors) ? comp.competitors : []
+  const home        = competitors.find(c => c?.homeAway === 'home') || competitors[0] || {}
+  const away        = competitors.find(c => c?.homeAway === 'away') || competitors[1] || {}
+  const statusName  = comp?.status?.type?.name || 'STATUS_SCHEDULED'
   const statusDetail = comp?.status?.type?.detail || ''
   const isLive      = statusName === 'STATUS_IN_PROGRESS'
   const isFinal     = statusName === 'STATUS_FINAL'
   const isUpcoming  = !isLive && !isFinal
 
-  const homeColor = home?.team?.color ? `#${home.team.color}` : '#1a6b3c'
-  const awayColor = away?.team?.color ? `#${away.team.color}` : '#1e40af'
+  const homeColor = safeColor(home?.team?.color, '#1a6b3c')
+  const awayColor = safeColor(away?.team?.color, '#1e3a8a')
 
-  const timeLeft = useCountdown(isUpcoming ? featured?.date : null)
+  const timeLeft = useCountdown(isUpcoming ? (featured?.date || null) : null)
+
+  const homeAbbr = home?.team?.abbreviation || home?.team?.displayName?.substring(0,3) || '?'
+  const awayAbbr = away?.team?.abbreviation || away?.team?.displayName?.substring(0,3) || '?'
 
   return (
-    <div className={styles.hero} style={{
-      background: `linear-gradient(135deg, ${awayColor}dd 0%, #0a0a0a 50%, ${homeColor}dd 100%)`
-    }}>
-      {/* Status badge */}
+    <div
+      className={styles.hero}
+      style={{ background: `linear-gradient(135deg, ${awayColor}cc 0%, #111 45%, ${homeColor}cc 100%)` }}
+    >
+      <div className={styles.overlay} />
+
+      {/* Status */}
       <div className={styles.statusRow}>
-        {isLive && <span className={styles.liveBadge}>● LIVE</span>}
-        {isFinal && <span className={styles.finalBadge}>FULL TIME</span>}
+        {isLive     && <span className={styles.liveBadge}>● LIVE</span>}
+        {isFinal    && <span className={styles.finalBadge}>FULL TIME</span>}
         {isUpcoming && <span className={styles.upcomingBadge}>UPCOMING</span>}
-        <span className={styles.leagueLabel}>
-          {isCricket ? '🏏' : '⚽'} {comp?.venue?.fullName || ''}
-        </span>
+        {comp?.venue?.fullName && (
+          <span className={styles.venue}>📍 {comp.venue.fullName}</span>
+        )}
       </div>
 
-      {/* Teams + Score */}
+      {/* Match */}
       <div className={styles.matchRow}>
-        {/* Away team */}
+        {/* Away */}
         <div className={styles.teamBlock}>
           {away?.team?.logo
-            ? <img src={away.team.logo} alt={away.team.displayName} className={styles.logo} />
-            : <div className={styles.logoFallback} style={{ background: awayColor }}>
-                {away?.team?.abbreviation?.[0] || '?'}
-              </div>
+            ? <img src={away.team.logo} alt={awayAbbr} className={styles.logo} />
+            : <div className={styles.logoFallback} style={{ background: awayColor }}>{awayAbbr[0]}</div>
           }
-          <div className={styles.teamName}>{away?.team?.displayName || 'TBD'}</div>
-          <div className={styles.teamAbbr}>{away?.team?.abbreviation || ''}</div>
+          <span className={styles.teamName}>{away?.team?.displayName || awayAbbr}</span>
         </div>
 
-        {/* Score / vs */}
-        <div className={styles.scoreBlock}>
+        {/* Centre */}
+        <div className={styles.centreBlock}>
           {(isLive || isFinal) ? (
             <>
               <div className={styles.scores}>
                 <span className={`${styles.score} ${away?.winner ? styles.winner : ''}`}>
                   {away?.score || '0'}
                 </span>
-                <span className={styles.scoreDash}>-</span>
+                <span className={styles.dash}>-</span>
                 <span className={`${styles.score} ${home?.winner ? styles.winner : ''}`}>
                   {home?.score || '0'}
                 </span>
               </div>
-              {statusDetail && <div className={styles.matchStatus}>{statusDetail}</div>}
+              {statusDetail && <p className={styles.detail}>{statusDetail}</p>}
             </>
           ) : (
             <>
-              <div className={styles.vs}>VS</div>
-              {/* Countdown */}
+              <span className={styles.vs}>VS</span>
               <div className={styles.countdown}>
-                <div className={styles.countUnit}>
-                  <span className={styles.countNum}>{pad(timeLeft.h)}</span>
-                  <span className={styles.countLabel}>HRS</span>
-                </div>
-                <span className={styles.countColon}>:</span>
-                <div className={styles.countUnit}>
-                  <span className={styles.countNum}>{pad(timeLeft.m)}</span>
-                  <span className={styles.countLabel}>MIN</span>
-                </div>
-                <span className={styles.countColon}>:</span>
-                <div className={styles.countUnit}>
-                  <span className={styles.countNum}>{pad(timeLeft.s)}</span>
-                  <span className={styles.countLabel}>SEC</span>
-                </div>
+                {[['h', timeLeft.h], ['m', timeLeft.m], ['s', timeLeft.s]].map(([label, val], i) => (
+                  <span key={label}>
+                    {i > 0 && <span className={styles.colon}>:</span>}
+                    <span className={styles.countUnit}>
+                      <b>{pad(val)}</b>
+                      <small>{label.toUpperCase()}</small>
+                    </span>
+                  </span>
+                ))}
               </div>
             </>
           )}
         </div>
 
-        {/* Home team */}
-        <div className={`${styles.teamBlock} ${styles.teamBlockRight}`}>
+        {/* Home */}
+        <div className={`${styles.teamBlock} ${styles.right}`}>
           {home?.team?.logo
-            ? <img src={home.team.logo} alt={home.team.displayName} className={styles.logo} />
-            : <div className={styles.logoFallback} style={{ background: homeColor }}>
-                {home?.team?.abbreviation?.[0] || '?'}
-              </div>
+            ? <img src={home.team.logo} alt={homeAbbr} className={styles.logo} />
+            : <div className={styles.logoFallback} style={{ background: homeColor }}>{homeAbbr[0]}</div>
           }
-          <div className={styles.teamName}>{home?.team?.displayName || 'TBD'}</div>
-          <div className={styles.teamAbbr}>{home?.team?.abbreviation || ''}</div>
+          <span className={styles.teamName}>{home?.team?.displayName || homeAbbr}</span>
         </div>
       </div>
 
-      {/* CTA button */}
-      <div className={styles.ctaRow}>
-        <Link href={`/match/${featured?.id}?sport=${sport}`} className={styles.ctaBtn}>
-          {isLive ? '▶ Watch Live' : isFinal ? 'Match Report →' : 'Match Info →'}
+      {/* CTA */}
+      <div className={styles.cta}>
+        <Link href={`/match/${featured?.id}?sport=${encodeURIComponent(sport)}`} className={styles.ctaBtn}>
+          {isLive ? '▶ Watch Live' : isFinal ? 'Match Report →' : 'Match Preview →'}
         </Link>
       </div>
     </div>

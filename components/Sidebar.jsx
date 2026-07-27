@@ -9,7 +9,7 @@ const FOOTBALL_TRENDING = [
 ]
 
 export default function Sidebar({ standings = [], sport, league }) {
-  const trending = sport === 'cricket' ? CRICKET_TRENDING : FOOTBALL_TRENDING
+  const trending = sport?.startsWith('cricket') ? CRICKET_TRENDING : FOOTBALL_TRENDING
   const entries = standings[0]?.standings?.entries?.slice(0, 6) || []
 
   return (
@@ -52,16 +52,9 @@ export default function Sidebar({ standings = [], sport, league }) {
         )}
       </div>
 
-      {/* IPL Teams Link */}
-      {sport?.startsWith('cricket') && (
-        <Link href="/cricket/teams" className={styles.iplTeamsBtn}>
-          🏏 View All IPL Teams →
-        </Link>
-      )}
-
       {/* Trending */}
       <div className={styles.card}>
-        <h3 className={styles.cardTitle}>Trending in {sport === 'cricket' ? '🏏 Cricket' : '⚽ Football'}</h3>
+        <h3 className={styles.cardTitle}>Trending in {sport?.startsWith('cricket') ? '🏏 Cricket' : '⚽ Football'}</h3>
         {trending.map((name, i) => (
           <div key={name} className={styles.trendRow}>
             <span className={styles.trendNum}>{i + 1}</span>
