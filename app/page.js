@@ -2,47 +2,41 @@
 import { useState, useEffect } from 'react'
 import TopBar from '../components/TopBar'
 import ScoresBar from '../components/ScoresBar'
+import FeaturedMatch from '../components/FeaturedMatch'
 import NewsFeed from '../components/NewsFeed'
 import Sidebar from '../components/Sidebar'
 import styles from './page.module.css'
 
-// Map sport + league to ESPN API slugs
 const SPORT_MAP = {
   cricket: {
-  IPL:  { scores: 'cricket/ipl', news: 'cricket' },
-  ICC:  { scores: 'cricket/icc-cricket-world-cup', news: 'cricket' },
-  Test: { scores: 'cricket/international-test', news: 'cricket' },
-  ODI:  { scores: 'cricket/international-odi', news: 'cricket' },
-  T20I: { scores: 'cricket/international-t20', news: 'cricket' },
-},
+    IPL:  { scores: 'cricket/ipl',                   news: 'cricket' },
+    ICC:  { scores: 'cricket/icc-cricket-world-cup',  news: 'cricket' },
+    Test: { scores: 'cricket/international-test',     news: 'cricket' },
+    ODI:  { scores: 'cricket/international-odi',      news: 'cricket' },
+    T20I: { scores: 'cricket/international-t20',      news: 'cricket' },
+  },
   football: {
-    'Premier League': { scores: 'soccer/eng.1', news: 'soccer/eng.1' },
-    'La Liga':        { scores: 'soccer/esp.1', news: 'soccer/esp.1' },
-    'Serie A':        { scores: 'soccer/ita.1', news: 'soccer/ita.1' },
-    'Bundesliga':     { scores: 'soccer/ger.1', news: 'soccer/ger.1' },
-    'MLS':            { scores: 'soccer/usa.1', news: 'soccer/usa.1' },
-    'FIFA World Cup': { scores: 'soccer/fifa.world', news: 'soccer/fifa.world' },
+    'Premier League': { scores: 'soccer/eng.1',       news: 'soccer/eng.1'  },
+    'La Liga':        { scores: 'soccer/esp.1',       news: 'soccer/esp.1'  },
+    'Serie A':        { scores: 'soccer/ita.1',       news: 'soccer/ita.1'  },
+    'Bundesliga':     { scores: 'soccer/ger.1',       news: 'soccer/ger.1'  },
+    'MLS':            { scores: 'soccer/usa.1',       news: 'soccer/usa.1'  },
+    'FIFA World Cup': { scores: 'soccer/fifa.world',  news: 'soccer/fifa.world' },
   },
 }
 
 export default function Home() {
-  const [activeSport, setActiveSport] = useState('cricket')
+  const [activeSport,  setActiveSport]  = useState('cricket')
   const [activeLeague, setActiveLeague] = useState('T20I')
-  const [games, setGames] = useState([])
-  const [articles, setArticles] = useState([])
-  const [standings, setStandings] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [games,        setGames]        = useState([])
+  const [articles,     setArticles]     = useState([])
+  const [standings,    setStandings]    = useState([])
+  const [loading,      setLoading]      = useState(true)
 
-  // When sport tab changes, reset league and clear stale data immediately
-  function handleSportChange(sport) {
-    const defaultLeague = sport === 'cricket' ? 'T20I' : 'Premier League'
-    setActiveSport(sport)
+  useEffect(() => {
+    const defaultLeague = activeSport === 'cricket' ? 'T20I' : 'Premier League'
     setActiveLeague(defaultLeague)
-    setGames([])
-    setArticles([])
-    setStandings([])
-    setLoading(true)
-  }
+  }, [activeSport])
 
   useEffect(() => {
     setLoading(true)
@@ -59,18 +53,25 @@ export default function Home() {
       setStandings(s || [])
       setLoading(false)
     })
-  }, [activeSport, activeLeague])
+  }, [activeLeague])
 
+  const sportSlug = SPORT_MAP[activeSport]?.[activeLeague]?.scores
 
   return (
     <div className={styles.page}>
       <TopBar
         activeSport={activeSport}
         activeLeague={activeLeague}
-        onSportChange={handleSportChange}
+        onSportChange={setActiveSport}
         onLeagueChange={setActiveLeague}
       />
-      <ScoresBar games={games} sport={SPORT_MAP[activeSport]?.[activeLeague]?.scores} />
+      <ScoresBar games={games} sport={sportSlug} />
+
+      {/* Featured match hero */}
+      {games.length > 0 && (
+        <FeaturedMatch games={games} sport={sportSlug} />
+      )}
+
       <main className={styles.main}>
         <div className={styles.feed}>
           {loading ? (
@@ -81,7 +82,11 @@ export default function Home() {
             <NewsFeed articles={articles} sport={activeSport} league={activeLeague} />
           )}
         </div>
-        <Sidebar standings={standings} sport={SPORT_MAP[activeSport]?.[activeLeague]?.scores} league={activeLeague} />
+        <Sidebar
+          standings={standings}
+          sport={sportSlug}
+          league={activeLeague}
+        />
       </main>
     </div>
   )
