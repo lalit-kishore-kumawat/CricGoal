@@ -3,25 +3,26 @@ import { useState, useEffect } from 'react'
 import TopBar from '../components/TopBar'
 import ScoresBar from '../components/ScoresBar'
 import FeaturedMatch from '../components/FeaturedMatch'
+import TeamFormTracker from '../components/TeamFormTracker'
 import NewsFeed from '../components/NewsFeed'
 import Sidebar from '../components/Sidebar'
 import styles from './page.module.css'
 
 const SPORT_MAP = {
   cricket: {
-    IPL:  { scores: 'cricket/ipl',                   news: 'cricket' },
-    ICC:  { scores: 'cricket/icc-cricket-world-cup',  news: 'cricket' },
-    Test: { scores: 'cricket/international-test',     news: 'cricket' },
-    ODI:  { scores: 'cricket/international-odi',      news: 'cricket' },
-    T20I: { scores: 'cricket/international-t20',      news: 'cricket' },
+    IPL:  { scores: 'cricket/ipl',                  news: 'cricket' },
+    ICC:  { scores: 'cricket/icc-cricket-world-cup', news: 'cricket' },
+    Test: { scores: 'cricket/international-test',    news: 'cricket' },
+    ODI:  { scores: 'cricket/international-odi',     news: 'cricket' },
+    T20I: { scores: 'cricket/international-t20',     news: 'cricket' },
   },
   football: {
-    'Premier League': { scores: 'soccer/eng.1',       news: 'soccer/eng.1'  },
-    'La Liga':        { scores: 'soccer/esp.1',       news: 'soccer/esp.1'  },
-    'Serie A':        { scores: 'soccer/ita.1',       news: 'soccer/ita.1'  },
-    'Bundesliga':     { scores: 'soccer/ger.1',       news: 'soccer/ger.1'  },
-    'MLS':            { scores: 'soccer/usa.1',       news: 'soccer/usa.1'  },
-    'FIFA World Cup': { scores: 'soccer/fifa.world',  news: 'soccer/fifa.world' },
+    'Premier League': { scores: 'soccer/eng.1',      news: 'soccer/eng.1'      },
+    'La Liga':        { scores: 'soccer/esp.1',      news: 'soccer/esp.1'      },
+    'Serie A':        { scores: 'soccer/ita.1',      news: 'soccer/ita.1'      },
+    'Bundesliga':     { scores: 'soccer/ger.1',      news: 'soccer/ger.1'      },
+    'MLS':            { scores: 'soccer/usa.1',      news: 'soccer/usa.1'      },
+    'FIFA World Cup': { scores: 'soccer/fifa.world', news: 'soccer/fifa.world' },
   },
 }
 
@@ -42,7 +43,6 @@ export default function Home() {
     setLoading(true)
     const map = SPORT_MAP[activeSport]?.[activeLeague]
     if (!map) return
-
     Promise.all([
       fetch(`/api/scores?sport=${map.scores}`).then(r => r.json()).catch(() => []),
       fetch(`/api/news?sport=${map.news}`).then(r => r.json()).catch(() => []),
@@ -67,13 +67,15 @@ export default function Home() {
       />
       <ScoresBar games={games} sport={sportSlug} />
 
-      {/* Featured match hero */}
       {games.length > 0 && (
         <FeaturedMatch games={games} sport={sportSlug} />
       )}
 
       <main className={styles.main}>
         <div className={styles.feed}>
+          {games.length > 0 && (
+            <TeamFormTracker games={games} sport={sportSlug} />
+          )}
           {loading ? (
             <div className={styles.skeleton}>
               {[1,2,3,4].map(i => <div key={i} className={styles.skeletonItem} />)}
@@ -82,11 +84,7 @@ export default function Home() {
             <NewsFeed articles={articles} sport={activeSport} league={activeLeague} />
           )}
         </div>
-        <Sidebar
-          standings={standings}
-          sport={sportSlug}
-          league={activeLeague}
-        />
+        <Sidebar standings={standings} sport={sportSlug} league={activeLeague} />
       </main>
     </div>
   )
