@@ -7,7 +7,8 @@ function HeroCard({ article }) {
         <img src={article.images[0].url} alt={article.headline} className={styles.heroImg} />
       ) : (
         <div className={styles.heroImgPlaceholder}>
-          <span>🏆</span>
+          <span className={styles.placeholderTag}>{article.categories?.[0]?.description || 'Sports'}</span>
+          <span className={styles.placeholderTitle}>{article.headline?.split(' ').slice(0,5).join(' ')}...</span>
         </div>
       )}
       <div className={styles.heroBody}>
@@ -33,7 +34,9 @@ function NewsItem({ article }) {
       {article.images?.[0]?.url ? (
         <img src={article.images[0].url} alt="" className={styles.thumb} />
       ) : (
-        <div className={styles.thumbPlaceholder}>📰</div>
+        <div className={styles.thumbPlaceholder}>
+          <span>{article.categories?.[0]?.description?.[0] || '📰'}</span>
+        </div>
       )}
       <div className={styles.itemBody}>
         <span className={styles.itemTag}>{sport}</span>
