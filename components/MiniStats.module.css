@@ -1,0 +1,83 @@
+.wrap {
+  background: var(--surface);
+  border: 1px solid var(--espn-border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.header {
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--espn-border);
+}
+.title {
+  font-size: 13px; font-weight: 700;
+  color: var(--text-primary); margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.card {
+  padding: 14px;
+  border-right: 1px solid var(--espn-border);
+}
+.card:last-child { border-right: none; }
+
+.cardLabel {
+  font-size: 10px; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 10px;
+}
+
+.cardInner {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  background: var(--bg);
+}
+.avatarPH {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #fff;
+  flex-shrink: 0;
+}
+
+.info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+.playerName {
+  font-size: 13px; font-weight: 600; color: var(--text-primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.stat { display: flex; align-items: baseline; gap: 4px; }
+.statNum {
+  font-size: 20px; font-weight: 900; color: var(--brand-green);
+  line-height: 1;
+}
+.statUnit {
+  font-size: 11px; color: var(--text-muted); font-weight: 500;
+}
+
+/* Single card (football) — full width */
+.grid:has(.card:only-child) {
+  grid-template-columns: 1fr;
+}
+.grid:has(.card:only-child) .card {
+  border-right: none;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .card { padding: 10px; }
+  .avatar, .avatarPH { width: 34px; height: 34px; }
+  .avatarPH { font-size: 11px; }
+  .playerName { font-size: 12px; }
+  .statNum { font-size: 18px; }
+}

@@ -4,6 +4,8 @@ import TopBar from '../components/TopBar'
 import ScoresBar from '../components/ScoresBar'
 import FeaturedMatch from '../components/FeaturedMatch'
 import TeamFormTracker from '../components/TeamFormTracker'
+import MiniStats from '../components/MiniStats'
+import RecentResults from '../components/RecentResults'
 import NewsFeed from '../components/NewsFeed'
 import Sidebar from '../components/Sidebar'
 import styles from './page.module.css'
@@ -74,7 +76,11 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.feed}>
           {games.length > 0 && (
-            <TeamFormTracker games={games} sport={sportSlug} />
+            <>
+              <TeamFormTracker games={games} sport={sportSlug} />
+              <MiniStats games={games} sport={sportSlug} />
+              <RecentResults games={games} sport={sportSlug} />
+            </>
           )}
           {loading ? (
             <div className={styles.skeleton}>
